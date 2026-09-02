@@ -44,9 +44,10 @@ object ViewUtil {
         }
     }
 
-    fun setMenuItemTitleColor(item: MenuItem, @ColorInt color: Int, title: CharSequence = item.title) {
-        val spannable = SpannableString(title)
-        spannable.setSpan(ForegroundColorSpan(color), 0, title.length, 0)
+    fun setMenuItemTitleColor(item: MenuItem, @ColorInt color: Int, title: CharSequence? = item.title) {
+        val safeTitle = title ?: ""
+        val spannable = SpannableString(safeTitle)
+        spannable.setSpan(ForegroundColorSpan(color), 0, safeTitle.length, 0)
         item.title = spannable
     }
 

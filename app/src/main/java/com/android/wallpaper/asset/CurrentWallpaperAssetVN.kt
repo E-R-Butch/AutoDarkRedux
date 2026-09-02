@@ -52,8 +52,8 @@ class CurrentWallpaperAssetVN(context: Context, private val which: Int) : Stream
 
         val options = BitmapFactory.Options()
         options.inJustDecodeBounds = true
-        mManager.getWallpaperFile(which).use { pfd ->
-            BitmapFactory.decodeFileDescriptor(pfd.fileDescriptor, null, options)
+        mManager.getWallpaperFile(which)?.use { pfd ->
+            pfd?.let { BitmapFactory.decodeFileDescriptor(it.fileDescriptor, null, options) }
         }
 
         if (options.outWidth == -1 || options.outHeight == -1) {

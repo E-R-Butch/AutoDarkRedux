@@ -2,20 +2,20 @@
 
 buildscript {
     ext {
-        ver_appcompat = '1.4.1'
-        ver_activity = '1.4.0'
-        ver_core = '1.7.0'
-        ver_glide = '4.12.0'
-        ver_gradle = '7.0.4'
-        ver_hiddenapi = '4.2'
+        ver_appcompat = '1.7.0'
+        ver_activity = '1.9.3'
+        ver_core = '1.13.1'
+        ver_glide = '4.16.0'
+        ver_gradle = '8.7.3'
+        ver_hiddenapi = '4.3'
         ver_leak = "2.8.1"
         ver_license ="1.0.0"
-        ver_lifecycle_extensions = "2.4.0"
-        ver_kotlin = '1.6.10'
-        ver_kotlin_coroutines = "1.6.0"
-        ver_material = "1.5.0"
+        ver_lifecycle_extensions = "2.8.7"
+        ver_kotlin = '2.0.20'
+        ver_kotlin_coroutines = "1.8.1"
+        ver_material = "1.12.0"
         ver_navigation = '2.1.0-beta02'
-        ver_preference = "1.2.0-rc01"
+        ver_preference = "1.2.1"
         ver_rikka_design = "3.1.8"
         ver_sunrise_cal = "1.2"
         ver_timber = "5.0.1"
@@ -28,7 +28,7 @@ buildscript {
 
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {
@@ -42,8 +42,9 @@ buildscript {
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
         maven { url 'https://jitpack.io' }
+        maven { url 'https://api.xposed.info/' }
     }
 }
 

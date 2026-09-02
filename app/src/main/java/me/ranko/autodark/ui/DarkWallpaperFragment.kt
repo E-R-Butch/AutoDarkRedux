@@ -166,7 +166,7 @@ class DarkWallpaperFragment : PreviewFragment(), ViewTreeObserver.OnGlobalLayout
                         .setDuration(resources.getInteger(android.R.integer.config_mediumAnimTime).toLong())
                         .alpha(1f)
                         .setListener(object : AnimatorListenerAdapter() {
-                            override fun onAnimationEnd(animation: Animator?) {
+                            override fun onAnimationEnd(animation: Animator) {
                                 mBinding.bottomActionbar.selectAction(BottomAction.APPLY)
                             }
                         })
@@ -181,7 +181,7 @@ class DarkWallpaperFragment : PreviewFragment(), ViewTreeObserver.OnGlobalLayout
                     .setDuration(resources.getInteger(android.R.integer.config_shortAnimTime).toLong())
                     .alpha(0f)
                     .setListener(object : AnimatorListenerAdapter() {
-                        override fun onAnimationEnd(animation: Animator?) {
+                        override fun onAnimationEnd(animation: Animator) {
                             mBinding.bottomActionbar.hide()
                         }
                     })
@@ -277,15 +277,15 @@ class DarkWallpaperFragment : PreviewFragment(), ViewTreeObserver.OnGlobalLayout
 
     private val mGlideRequestListener by lazy(LazyThreadSafetyMode.NONE) {
         object : RequestListener<Drawable> {
-            override fun onLoadFailed(e: GlideException?, model: Any, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+            override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>, isFirstResource: Boolean): Boolean {
                 if (viewModel.isErrorAssetReported(model as Asset).not()) {
-                    viewModel.onWallpaperCorrupted(model)
+                    viewModel.onWallpaperCorrupted(model as Asset)
                     showLoadWallpaperErrorDialog(e)
                 }
                 return false
             }
 
-            override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+            override fun onResourceReady(resource: Drawable, model: Any, target: Target<Drawable>?, dataSource: DataSource, isFirstResource: Boolean): Boolean {
                 return false
             }
         }

@@ -31,7 +31,7 @@ abstract class BaseListActivity : AppCompatActivity(), OnApplyWindowInsetsListen
         ViewCompat.setOnApplyWindowInsetsListener(window!!.decorView.rootView, this)
     }
 
-    override fun onApplyWindowInsets(v: View, insets: WindowInsetsCompat): WindowInsetsCompat? {
+    override fun onApplyWindowInsets(v: View, insets: WindowInsetsCompat): WindowInsetsCompat {
         v.setOnApplyWindowInsetsListener(null)
         val systemBarInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
         bottomNavHeight = systemBarInsets.bottom

@@ -3,27 +3,29 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 31
-    buildToolsVersion "32.0.0"
+    namespace 'me.ranko.autodark'
+    compileSdkVersion 36
+    buildToolsVersion "36.0.0"
 
     defaultConfig {
         applicationId "me.ranko.autodark"
         minSdkVersion 29
-        targetSdkVersion 31
+        targetSdkVersion 36
         versionCode 15
         versionName "3.0.5"
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 
     buildFeatures {
+        buildConfig true
         // Determines whether to support Data Binding.
         dataBinding = true
     }
@@ -82,10 +84,9 @@ dependencies {
     // Logging
     implementation "com.jakewharton.timber:timber:$ver_timber"
 
-    // Shizuku API
-    implementation project(':api')
-    implementation project(':aidl')
-    implementation project(':provider')
+    // Shizuku API (mavenCentral, replaced submodules)
+    implementation "dev.rikka.shizuku:api:13.1.0"
+    implementation "dev.rikka.shizuku:provider:13.1.0"
     compileOnly project(':hidden-api-dark')
 
     // Simple License Display

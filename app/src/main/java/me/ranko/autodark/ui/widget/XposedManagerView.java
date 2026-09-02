@@ -121,7 +121,7 @@ public final class XposedManagerView implements DefaultLifecycleObserver {
     }
 
     private static Drawable getDrawable(Context context, @DrawableRes int res) {
-        int color = ViewUtil.INSTANCE.getAttrColor(context, R.attr.colorOnSurface);
+        int color = ViewUtil.INSTANCE.getAttrColor(context, com.google.android.material.R.attr.colorOnSurface);
         Drawable drawable = Objects.requireNonNull(ContextCompat.getDrawable(context, res));
         drawable.setTint(color);
         drawable.setTintMode(PorterDuff.Mode.SRC_IN);

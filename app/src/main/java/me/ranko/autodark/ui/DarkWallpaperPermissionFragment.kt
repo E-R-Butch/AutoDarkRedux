@@ -176,7 +176,7 @@ class DarkWallpaperPermissionFragment : AppbarFragment() {
             .alpha(0f)
             .setDuration(resources.getInteger(android.R.integer.config_mediumAnimTime).toLong())
             .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                     animation?.removeListener(this)
                     targetCard.visibility = View.GONE
                     if (mBinding.shizukuLayout.isGone && mBinding.storageLayout.isGone) {

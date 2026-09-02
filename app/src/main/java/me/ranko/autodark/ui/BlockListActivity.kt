@@ -140,7 +140,7 @@ class BlockListActivity : BaseListActivity() {
             } else {
                 binding.fab.setImageResource(R.drawable.ic_save)
                 binding.toolbarEdit.setHint(searchHint)
-                ViewUtil.getAttrColor(this, R.attr.colorOnSurface)
+                ViewUtil.getAttrColor(this, com.google.android.material.R.attr.colorOnSurface)
             }
             // use primary icon color when editing
             menu?.findItem(R.id.action_edit)?.icon?.mutate()?.setTint(iconColor)
