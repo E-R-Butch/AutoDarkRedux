@@ -93,7 +93,10 @@
         <item name="android:textColor">?attr/colorPrimary</item>
     </style>
 
-    <style name="CardProgress" parent="Widget.AppCompat.ProgressBar"/>
+    <style name="CardProgress" parent="Widget.AppCompat.ProgressBar">
+        <item name="android:layout_width">@dimen/permission_button_size</item>
+        <item name="android:layout_height">@dimen/permission_button_size</item>
+    </style>
 
     <style name="ManagerAppListTextAppearance" parent="TextAppearance.Material3.BodyMedium"/>
 
