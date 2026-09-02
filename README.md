@@ -1,52 +1,106 @@
-Auto Dark
-======
+# AutoDark Redux
+
 [![works badge](https://cdn.jsdelivr.net/gh/nikku/works-on-my-machine@v0.2.0/badge.svg)][project_link]
+[![API](https://img.shields.io/badge/API-29--36-brightgreen.svg)](https://android-arsenal.com/api?level=36)
+[![Material 3](https://img.shields.io/badge/Material-3%20%7C%20Dynamic%20Color-blue)](https://m3.material.io)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.0.20-purple)](https://kotlinlang.org)
 
-A small Android app to let you schedule dark mode On/Off.
+A small Android app to schedule dark mode On/Off — **Redux edition**.
 
-This app need to modify system secure settings, permission ``` android.permission.WRITE_SECURE_SETTINGS``` are required.
+Fork of [0ranko0P/AutoDark](https://github.com/0ranko0P/AutoDark) (MIT), modernized for Android 12–16 with Material 3 Expressive.
 
-Available on [F-Droid][fdroid_link]
+> 原版 2019 年停更于 `SDK 31 / Material 2 / DataBinding`，本分支一次性迁移到 `SDK 36 / Material 3 + Compose + Monet`。
 
-[<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="80">][fdroid_link]
+## What's New in Redux
+
+| 维度 | 原版 | Redux |
+| :--- | :--- | :--- |
+| **SDK** | 31 (Android 12) | **36 (Android 16)** + 兼容 29–36 |
+| **Design** | Material 2 | **Material 3 + Dynamic Color (Monet) + Themed Icons + Edge-to-Edge** |
+| **UI** | DataBinding + PreferenceFragment | **Compose Material 3** (主设置页) + View 渐进迁移 |
+| **Wallpaper** | 2500 行 AOSP 拷贝 + Shizuku 强依赖 | **100 行 WallpaperRepository** (`WallpaperManager.setStream`)，Shizuku 可选 |
+| **Toolchain** | AGP 7.0.4 / Gradle 7.0.2 / Kotlin 1.6.10 / jcenter | **AGP 8.7.3 / Gradle 8.11 / Kotlin 2.0.20 / mavenCentral** |
+| **Build** | 本地 | **外置盘** (`GRADLE_USER_HOME` + `ANDROID_HOME` 在 `/Volumes/移动硬盘`) |
+
+### ✨ 核心功能
+*   **跟随壁纸变色** - `DynamicColors.applyToActivitiesIfAvailable()`，换壁纸全 App 自动染成同色系
+*   **主题图标** - `monochrome` 层，桌面图标跟壁纸同色 (Android 13+，16 强制)
+*   **日夜双壁纸** - 像 iOS 一样，日/夜各一张，调度时自动 `WallpaperManager.setStream()` 切换，无需 Shizuku
+*   **Compose 预览** - 设置最底部 `✨ Material 3 Compose 预览` 进入新版主界面
 
 ## Requirements
-AOSP Andorid 10 like system.
 
-OEM builds are not supported e.g. Flyme,
-they already have this function or not compatible with their theme engine.
+*   AOSP Android 12–16 (API 29–36). OEM 深度定制 (Flyme/MIUI) 可能不兼容系统深色调度
+*   需要 `android.permission.WRITE_SECURE_SETTINGS` (adb 授予：`adb shell pm grant me.ranko.autodark android.permission.WRITE_SECURE_SETTINGS`)
+*   可选：Shizuku / Sui 仅用于动态壁纸 (`LiveWallpaper`)，静态壁纸无需
+
+## Build
+
+### 1. 外置盘准备 (本地 18G 不够时)
+```bash
+# JDK 17 (AGP 8.7 要求)
+brew install openjdk@17
+export JAVA_HOME=/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home
+export GRADLE_USER_HOME=/Volumes/移动硬盘/gradle-cache
+export ANDROID_HOME=/Volumes/移动硬盘/Android-sdk
+# SDK 35+36 已预装在外置盘
+```
+
+### 2. 编译
+```bash
+./gradlew :app:assembleDebug
+# APK: app/build/outputs/apk/debug/app-debug.apk (15M 无 Compose / 57M 含 Compose，release 会压到 10M)
+```
+
+### 3. 关键配置
+*   `gradle/wrapper/gradle-wrapper.properties` → `8.11`
+*   `local.properties` → `sdk.dir=/Volumes/移动硬盘/Android-sdk`
+*   `build` 目录已 symlink 到外置盘，不占本地
+
+## Project Structure
+
+```
+app/src/main/java/me/ranko/autodark/
+├── data/WallpaperRepository.kt      # 100 行新仓库，替代 670 行 Helper
+├── core/DarkModeSettings.kt         # 调度核心，新增 WallpaperRepository 调用
+├── ui/compose/                      # Compose Material 3
+│   ├── theme/Theme.kt               # dynamicLight/DarkColorScheme
+│   ├── MainScreen.kt                # 新主设置页
+│   └── MainComposeActivity.kt
+├── ui/MainFragment.kt               # 旧设置 (保留，入口在底部)
+└── ui/DarkWallpaper*                # 旧壁纸逻辑 (待删 AOSP)
+```
+
+## Migration Plan
+
+详见 [.hermes/plans/02-full-migration-plan.md](.hermes/plans/02-full-migration-plan.md) - 5 阶段 23 任务，已完成 Phase 1+2+4 前半。
+
+*   Phase 1 ✅ 工具链
+*   Phase 2 ✅ 轻量仓库
+*   Phase 4 ✅ M3/Monet/图标/Edge + Compose 主界面
+*   待：双壁纸 Compose + 删 38 个 AOSP + 架构 ViewBinding + 单测
 
 ## Screenshots
+
 <p align="middle">
     <img src="https://raw.githubusercontent.com/0ranko0P/AutoDark/master/fastlane/metadata/android/en-US/images/phoneScreenshots/Screenshot_1.png" width="200" />
     <img src="https://raw.githubusercontent.com/0ranko0P/AutoDark/master/fastlane/metadata/android/en-US/images/phoneScreenshots/Screenshot_2.png" width="200" />
-    <img src="https://raw.githubusercontent.com/0ranko0P/AutoDark/master/fastlane/metadata/android/en-US/images/phoneScreenshots/Screenshot_3.png" width="200" />
-    <img src="https://raw.githubusercontent.com/0ranko0P/AutoDark/master/fastlane/metadata/android/en-US/images/phoneScreenshots/Screenshot_4.png" width="200" />
-</>
+</p>
 
-# License
+> 新版 Monet 截图待补
 
-	MIT License
-	
-	Copyright (c) 2019 0ranko0P
-	
-	Permission is hereby granted, free of charge, to any person obtaining a copy
-	of this software and associated documentation files (the "Software"), to deal
-	in the Software without restriction, including without limitation the rights
-	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-	copies of the Software, and to permit persons to whom the Software is
-	furnished to do so, subject to the following conditions:
-	
-	The above copyright notice and this permission notice shall be included in all
-	copies or substantial portions of the Software.
-	
-	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-	SOFTWARE.
-	
-[project_link]: https://github.com/0ranko0P/AutoDark
+## Credits
+
+*   Original: [0ranko0P/AutoDark](https://github.com/0ranko0P/AutoDark) MIT
+*   Redux: E-R-Butch
+
+## License
+
+MIT License
+
+Copyright (c) 2019 0ranko0P
+
+Permission is hereby granted, free of charge, to any person obtaining a copy...
+
+[project_link]: https://github.com/E-R-Butch/AutoDarkRedux
 [fdroid_link]: https://f-droid.org/packages/me.ranko.autodark

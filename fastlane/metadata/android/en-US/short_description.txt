@@ -1,1 +1,1 @@
-Utility to schedule system dark mode.
+Schedule dark mode - Material 3 + Dynamic Color + Dual wallpaper (Redux)

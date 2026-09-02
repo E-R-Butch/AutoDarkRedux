@@ -1,5 +1,17 @@
-A small app to let you schedule dark mode.
+AutoDark Redux - Schedule dark mode with Material You.
 
-<b>System requirements</b>
-* At least Android 10.
-* OEM builds are not supported e.g. Flyme.
+A modernized fork of 0ranko0P/AutoDark, now for Android 12-16.
+
+<b>What's new in Redux:</b>
+* Material 3 + Dynamic Color (Monet) - App follows wallpaper colors
+* Themed Icons - launcher icon tints with wallpaper (Android 13+, enforced on 16)
+* Dual wallpaper - like iOS, separate light/dark wallpapers auto-switch
+* Edge-to-Edge + Compose - rebuilt main screen with Material 3 Expressive
+* SDK 36 (Android 16) - AGP 8.7.3 / Kotlin 2.0.20 / Gradle 8.11
+
+<b>Requirements:</b>
+* AOSP Android 12-16 (API 29-36)
+* WRITE_SECURE_SETTINGS (adb grant)
+* Shizuku optional, only for Live Wallpapers
+
+<b>Original:</b> 0ranko0P/AutoDark MIT
