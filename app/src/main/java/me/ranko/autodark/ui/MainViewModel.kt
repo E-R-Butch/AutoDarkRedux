@@ -1,13 +1,11 @@
 package me.ranko.autodark.ui
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.app.UiModeManager
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresPermission
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.ObservableField
@@ -22,7 +20,6 @@ import me.ranko.autodark.Constant.SP_KEY_MASTER_SWITCH
 import me.ranko.autodark.Constant.SP_RESTRICTED_SILENCE
 import me.ranko.autodark.R
 import me.ranko.autodark.receivers.DarkModeAlarmReceiver
-import me.ranko.autodark.Utils.DarkLocationUtil
 import me.ranko.autodark.Utils.DarkTimeUtil
 import me.ranko.autodark.Utils.ViewUtil
 import me.ranko.autodark.core.DarkModeSettings
@@ -210,12 +207,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application), D
     /**
      * Called when auto mode is clicked
      * */
-    @RequiresPermission(allOf = [android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION])
     fun onAutoModeClicked() = viewModelScope.launch(Dispatchers.Main) {
-        val locationUtil = DarkLocationUtil.getInstance(mContext)
-
         // notify user turn location on
-        if (!darkSettings.isAutoMode() && !locationUtil.isEnabled()) {
+        if (!darkSettings.isAutoMode() && !darkSettings.isLocationEnabled()) {
             summaryText.set(newSummary(R.string.app_location_disabled))
         } else {
             val old = darkSettings.isDarkMode() ?: false
@@ -240,7 +234,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application), D
         _requirePermission.value = false
     }
 
-    @SuppressLint("MissingPermission")
     fun onLocationPermissionResult(granted: Boolean) {
         if (granted) {
             onAutoModeClicked()

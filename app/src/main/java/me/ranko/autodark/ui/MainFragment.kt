@@ -1,7 +1,6 @@
 package me.ranko.autodark.ui
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.ActivityOptions
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -108,7 +107,8 @@ class MainFragment : PreferenceFragmentCompat(), DarkPreferenceSupplier {
 
     private val locationPermissionLauncher =
         registerForActivityResult(RequestMultiplePermissions()) { result ->
-            val granted = result.values.find { it.not() } ?: true
+            val granted = result[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+                result[Manifest.permission.ACCESS_COARSE_LOCATION] == true
             viewModel.onLocationPermissionResult(granted)
         }
 
@@ -188,7 +188,6 @@ class MainFragment : PreferenceFragmentCompat(), DarkPreferenceSupplier {
      * @see     checkLocationPermission
      * @see     MainViewModel.onAutoModeClicked
      * */
-    @SuppressLint("MissingPermission")
     private fun onAutoPreferenceClick() {
         if (checkLocationPermission()) {
             // disable time preference now
@@ -259,7 +258,7 @@ class MainFragment : PreferenceFragmentCompat(), DarkPreferenceSupplier {
     }
 
     private fun checkLocationPermission(): Boolean {
-        return requireActivity().checkSelfPermission(PERMISSIONS_LOCATION[0]) == PackageManager.PERMISSION_GRANTED &&
-                requireActivity().checkSelfPermission(PERMISSIONS_LOCATION[1]) == PackageManager.PERMISSION_GRANTED
+        return requireActivity().checkSelfPermission(PERMISSIONS_LOCATION[0]) == PackageManager.PERMISSION_GRANTED ||
+            requireActivity().checkSelfPermission(PERMISSIONS_LOCATION[1]) == PackageManager.PERMISSION_GRANTED
     }
 }

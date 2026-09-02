@@ -8,7 +8,6 @@ import android.os.Build
 import android.os.SystemProperties
 import android.provider.Settings
 import android.widget.Toast
-import androidx.annotation.RequiresPermission
 import androidx.annotation.StringDef
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -27,9 +26,9 @@ import me.ranko.autodark.Constant.SP_KEY_MASTER_SWITCH
 import me.ranko.autodark.Constant.SYSTEM_PROP_FORCE_DARK
 import me.ranko.autodark.Constant.SYSTEM_SECURE_PROP_DARK_MODE
 import me.ranko.autodark.R
-import me.ranko.autodark.Utils.DarkLocationUtil
 import me.ranko.autodark.Utils.DarkTimeUtil
 import me.ranko.autodark.Utils.ShellJobUtil
+import me.ranko.autodark.data.LocationRepository
 import me.ranko.autodark.data.WallpaperRepository
 import me.ranko.autodark.domain.DarkModeScheduler
 import me.ranko.autodark.ui.MainFragment.Companion.DARK_PREFERENCE_END
@@ -113,6 +112,8 @@ class DarkModeSettings private constructor(private val context: Application) :
     private val scheduler: DarkModeScheduler by lazy(LazyThreadSafetyMode.NONE) {
         DarkModeScheduler(context, ::isDarkMode, ::setDarkMode)
     }
+
+    private val locationRepository = LocationRepository(context)
 
     private var isAutoMode = sp.getBoolean(SP_AUTO_mode, false)
 
@@ -214,7 +215,6 @@ class DarkModeSettings private constructor(private val context: Application) :
      *
      * @return  **True** if mode switched successfully
      * */
-    @RequiresPermission(allOf = [android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION])
     suspend fun triggerAutoMode(): Boolean {
         if (isAutoMode) {
             isAutoMode = false
@@ -224,8 +224,7 @@ class DarkModeSettings private constructor(private val context: Application) :
             return true
         }
 
-        val locationUtil = DarkLocationUtil.getInstance(context)
-        val location = locationUtil.getLastLocation()
+        val location = locationRepository.getLastLocation()
         if (location != null) {
             val darkTimeStr = DarkTimeUtil.getDarkTimeString(location)
             Timber.i("Sunrise at ${darkTimeStr.first}, sunset at ${darkTimeStr.second}")
@@ -338,6 +337,8 @@ class DarkModeSettings private constructor(private val context: Application) :
     fun getStartTime(): LocalTime = getPreferenceTime(DARK_PREFERENCE_START)
 
     fun getEndTime(): LocalTime = getPreferenceTime(DARK_PREFERENCE_END)
+
+    fun isLocationEnabled(): Boolean = locationRepository.isEnabled()
 
     fun overrideIfNeeded(mode: Boolean = false) {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {

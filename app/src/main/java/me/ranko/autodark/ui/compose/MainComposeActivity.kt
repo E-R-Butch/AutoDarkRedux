@@ -10,7 +10,6 @@ import androidx.activity.result.contract.ActivityResultContracts.RequestMultiple
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import me.ranko.autodark.ui.MainViewModel
-import java.time.LocalTime
 import java.util.Locale
 
 class MainComposeActivity : ComponentActivity() {
@@ -18,7 +17,7 @@ class MainComposeActivity : ComponentActivity() {
 
     private val locationPermissionLauncher =
         registerForActivityResult(RequestMultiplePermissions()) { result ->
-            val granted = result[Manifest.permission.ACCESS_FINE_LOCATION] == true &&
+            val granted = result[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
                 result[Manifest.permission.ACCESS_COARSE_LOCATION] == true
             viewModel.onLocationPermissionResult(granted)
         }
@@ -45,7 +44,7 @@ class MainComposeActivity : ComponentActivity() {
             Manifest.permission.ACCESS_COARSE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
 
-        if (hasFine && hasCoarse) {
+        if (hasFine || hasCoarse) {
             viewModel.onAutoModeClicked()
         } else {
             locationPermissionLauncher.launch(
