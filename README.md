@@ -20,7 +20,6 @@ Fork of [0ranko0P/AutoDark](https://github.com/0ranko0P/AutoDark) (MIT), moderni
 | **UI** | DataBinding + PreferenceFragment | **Compose Material 3** (主设置页) + View 渐进迁移 |
 | **Wallpaper** | 2500 行 AOSP 拷贝 + Shizuku 强依赖 | **100 行 WallpaperRepository** (`WallpaperManager.setStream`)，Shizuku 可选 |
 | **Toolchain** | AGP 7.0.4 / Gradle 7.0.2 / Kotlin 1.6.10 / jcenter | **AGP 8.7.3 / Gradle 8.11 / Kotlin 2.0.20 / mavenCentral** |
-| **Build** | 本地 | **外置盘** (`GRADLE_USER_HOME` + `ANDROID_HOME` 在 `/Volumes/移动硬盘`) |
 
 ### ✨ 核心功能
 *   **跟随壁纸变色** - `DynamicColors.applyToActivitiesIfAvailable()`，换壁纸全 App 自动染成同色系
@@ -36,33 +35,18 @@ Fork of [0ranko0P/AutoDark](https://github.com/0ranko0P/AutoDark) (MIT), moderni
 
 ## Build
 
-### 1. 外置盘准备 (本地 18G 不够时)
 ```bash
 # JDK 17 (AGP 8.7 要求)
-brew install openjdk@17
-export JAVA_HOME=/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home
-export GRADLE_USER_HOME=/Volumes/移动硬盘/gradle-cache
-export ANDROID_HOME=/Volumes/移动硬盘/Android-sdk
-# SDK 35+36 已预装在外置盘
-```
-
-### 2. 编译
-```bash
 ./gradlew :app:assembleDebug
-# APK: app/build/outputs/apk/debug/app-debug.apk (15M 无 Compose / 57M 含 Compose，release 会压到 10M)
+# APK: app/build/outputs/apk/debug/app-debug.apk
 ```
-
-### 3. 关键配置
-*   `gradle/wrapper/gradle-wrapper.properties` → `8.11`
-*   `local.properties` → `sdk.dir=/Volumes/移动硬盘/Android-sdk`
-*   `build` 目录已 symlink 到外置盘，不占本地
 
 ## Project Structure
 
 ```
 app/src/main/java/me/ranko/autodark/
 ├── data/WallpaperRepository.kt      # 100 行新仓库，替代 670 行 Helper
-├── core/DarkModeSettings.kt         # 调度核心，新增 WallpaperRepository 调用
+├── core/DarkModeSettings.kt         # 调度核心
 ├── ui/compose/                      # Compose Material 3
 │   ├── theme/Theme.kt               # dynamicLight/DarkColorScheme
 │   ├── MainScreen.kt                # 新主设置页
@@ -70,15 +54,6 @@ app/src/main/java/me/ranko/autodark/
 ├── ui/MainFragment.kt               # 旧设置 (保留，入口在底部)
 └── ui/DarkWallpaper*                # 旧壁纸逻辑 (待删 AOSP)
 ```
-
-## Migration Plan
-
-详见 [.hermes/plans/02-full-migration-plan.md](.hermes/plans/02-full-migration-plan.md) - 5 阶段 23 任务，已完成 Phase 1+2+4 前半。
-
-*   Phase 1 ✅ 工具链
-*   Phase 2 ✅ 轻量仓库
-*   Phase 4 ✅ M3/Monet/图标/Edge + Compose 主界面
-*   待：双壁纸 Compose + 删 38 个 AOSP + 架构 ViewBinding + 单测
 
 ## Screenshots
 
@@ -99,8 +74,6 @@ app/src/main/java/me/ranko/autodark/
 MIT License
 
 Copyright (c) 2019 0ranko0P
-
-Permission is hereby granted, free of charge, to any person obtaining a copy...
 
 [project_link]: https://github.com/E-R-Butch/AutoDarkRedux
 [fdroid_link]: https://f-droid.org/packages/me.ranko.autodark
