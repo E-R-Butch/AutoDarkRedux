@@ -27,6 +27,7 @@ import me.ranko.autodark.Utils.DarkTimeUtil.getPersistFormattedString
 import me.ranko.autodark.Utils.DarkTimeUtil.getTodayOrNextDay
 import me.ranko.autodark.Utils.ShellJobUtil
 import me.ranko.autodark.receivers.DarkModeAlarmReceiver
+import me.ranko.autodark.data.WallpaperRepository
 import me.ranko.autodark.ui.DarkWallpaperHelper
 import me.ranko.autodark.ui.MainFragment.Companion.DARK_PREFERENCE_END
 import me.ranko.autodark.ui.MainFragment.Companion.DARK_PREFERENCE_FORCE_ROOT
@@ -201,8 +202,15 @@ class DarkModeSettings private constructor(private val context: Application) :
         val endTime = if (key == DARK_PREFERENCE_START) getEndTime() else time
         val adjusted = adjustModeOnTime(startTime, endTime)
 
+        // Dual wallpaper - new lightweight repo (Phase 2)
+        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+            try {
+                val isDark = DarkTimeUtil.isInTime(startTime, endTime, LocalTime.now())
+                WallpaperRepository(context).apply(isDark)
+            } catch (_: Exception) {}
+        }
+        // Legacy helper keep for compat (will be removed after full migration)
         if (AutoDarkApplication.isOnePlus()) {
-            // ignore current dark mode on onePlus
             val darkMode = DarkTimeUtil.isInTime(startTime, endTime, LocalTime.now())
             DarkWallpaperHelper.getInstance(context, null).onAlarm(darkMode)
         } else if (adjusted) {
@@ -352,7 +360,10 @@ class DarkModeSettings private constructor(private val context: Application) :
             (context.getSystemService(Activity.ALARM_SERVICE) as AlarmManager)
                     .set(AlarmManager.RTC, nextAlarm, pendingIntent)
             Timber.v("Dark job $type finished, pending next alarm: $nextAlarm")
-            // change wallpaper now
+            // change wallpaper now - new repo
+            kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+                try { WallpaperRepository(context).apply(switch) } catch (_: Exception) {}
+            }
             DarkWallpaperHelper.getInstance(context, null).onAlarm(switch)
         } catch (e: Exception) {
             Timber.i(e)
@@ -400,6 +411,9 @@ class DarkModeSettings private constructor(private val context: Application) :
         )
 
         if (darkModeChanged) { // Change wallpaper now
+            kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+                try { WallpaperRepository(context).apply(isDarkMode() == true) } catch (_: Exception) {}
+            }
             DarkWallpaperHelper.getInstance(context, null).onBoot(isDarkMode() == true)
         }
     }

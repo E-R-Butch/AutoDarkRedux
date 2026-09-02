@@ -87,7 +87,6 @@ dependencies {
     // Shizuku API (mavenCentral, replaced submodules)
     implementation "dev.rikka.shizuku:api:13.1.0"
     implementation "dev.rikka.shizuku:provider:13.1.0"
-    compileOnly project(':hidden-api-dark')
 
     // Simple License Display
     implementation "com.marcdonald:simplelicensedisplay:$ver_license"
@@ -99,5 +98,6 @@ dependencies {
     compileOnly "de.robv.android.xposed:api:$ver_xposed"
     compileOnly "de.robv.android.xposed:api:$ver_xposed:sources"
 
+    compileOnly project(':hidden-api-dark')
     implementation "org.lsposed.hiddenapibypass:hiddenapibypass:$ver_hiddenapi"
 }
