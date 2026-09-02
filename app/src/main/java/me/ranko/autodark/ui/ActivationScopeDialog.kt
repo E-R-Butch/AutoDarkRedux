@@ -5,7 +5,6 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import com.android.wallpaper.util.ScreenSizeCalculator
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
@@ -33,8 +32,8 @@ class ActivationScopeDialog : BottomSheetDialogFragment() {
                 activity.requestedOrientation = savedOrientation
             }
 
-            val screenSize = ScreenSizeCalculator.getInstance().getScreenSize(requireActivity())
-            dialog.behavior.peekHeight = screenSize.y
+            val dm = requireActivity().resources.displayMetrics
+            dialog.behavior.peekHeight = dm.heightPixels
         }
         return dialog
     }

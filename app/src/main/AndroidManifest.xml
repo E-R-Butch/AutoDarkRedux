@@ -74,12 +74,6 @@
             android:exported="false"
             android:theme="@style/AppTheme.Transparent.DarkActionBar" />
 
-        <activity
-            android:name=".ui.DarkWallpaperPickerActivity"
-            android:exported="false"
-            android:resizeableActivity="false"
-            android:theme="@style/AppTheme.ActionBar.Preview" />
-
         <activity android:name=".ui.LicenseActivity" />
 
         <activity
@@ -97,11 +91,6 @@
             android:name=".ui.PermissionActivity"
             android:launchMode="singleTop" />
 
-        <activity
-            android:name=".ui.StandalonePreviewActivity"
-            android:resizeableActivity="false"
-            android:theme="@style/AppTheme.ActionBar" />
-
         <service
             android:name=".services.DarkModeTileService"
             android:enabled="true"
@@ -113,16 +102,6 @@
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
         </service>
-
-        <service
-            android:name=".services.DarkLiveWallpaperService"
-            android:enabled="true"
-            android:exported="false" />
-
-        <service
-            android:name=".services.RotationListenerService"
-            android:enabled="true"
-            android:exported="false" />
 
         <meta-data
             android:name="xposedmodule"

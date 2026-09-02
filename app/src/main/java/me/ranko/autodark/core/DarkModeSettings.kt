@@ -28,7 +28,6 @@ import me.ranko.autodark.Utils.DarkTimeUtil.getTodayOrNextDay
 import me.ranko.autodark.Utils.ShellJobUtil
 import me.ranko.autodark.receivers.DarkModeAlarmReceiver
 import me.ranko.autodark.data.WallpaperRepository
-import me.ranko.autodark.ui.DarkWallpaperHelper
 import me.ranko.autodark.ui.MainFragment.Companion.DARK_PREFERENCE_END
 import me.ranko.autodark.ui.MainFragment.Companion.DARK_PREFERENCE_FORCE_ROOT
 import me.ranko.autodark.ui.MainFragment.Companion.DARK_PREFERENCE_START
@@ -202,19 +201,12 @@ class DarkModeSettings private constructor(private val context: Application) :
         val endTime = if (key == DARK_PREFERENCE_START) getEndTime() else time
         val adjusted = adjustModeOnTime(startTime, endTime)
 
-        // Dual wallpaper - new lightweight repo (Phase 2)
+        // Dual wallpaper - WallpaperRepository only (AOSP removed)
         kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
             try {
                 val isDark = DarkTimeUtil.isInTime(startTime, endTime, LocalTime.now())
                 WallpaperRepository(context).apply(isDark)
             } catch (_: Exception) {}
-        }
-        // Legacy helper keep for compat (will be removed after full migration)
-        if (AutoDarkApplication.isOnePlus()) {
-            val darkMode = DarkTimeUtil.isInTime(startTime, endTime, LocalTime.now())
-            DarkWallpaperHelper.getInstance(context, null).onAlarm(darkMode)
-        } else if (adjusted) {
-            DarkWallpaperHelper.getInstance(context, null).onAlarm(isDarkMode() == true)
         }
         return true
     }
@@ -360,11 +352,10 @@ class DarkModeSettings private constructor(private val context: Application) :
             (context.getSystemService(Activity.ALARM_SERVICE) as AlarmManager)
                     .set(AlarmManager.RTC, nextAlarm, pendingIntent)
             Timber.v("Dark job $type finished, pending next alarm: $nextAlarm")
-            // change wallpaper now - new repo
+            // change wallpaper now - WallpaperRepository only
             kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
                 try { WallpaperRepository(context).apply(switch) } catch (_: Exception) {}
             }
-            DarkWallpaperHelper.getInstance(context, null).onAlarm(switch)
         } catch (e: Exception) {
             Timber.i(e)
             Toast.makeText(context, R.string.dark_mode_permission_denied, Toast.LENGTH_SHORT).show()
@@ -414,7 +405,6 @@ class DarkModeSettings private constructor(private val context: Application) :
             kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
                 try { WallpaperRepository(context).apply(isDarkMode() == true) } catch (_: Exception) {}
             }
-            DarkWallpaperHelper.getInstance(context, null).onBoot(isDarkMode() == true)
         }
     }
 

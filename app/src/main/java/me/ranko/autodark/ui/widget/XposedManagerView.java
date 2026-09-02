@@ -24,8 +24,10 @@ import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.wallpaper.util.ScreenSizeCalculator;
-import com.android.wallpaper.util.TimeUtils.TimeTicker;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 
 import java.time.LocalTime;
 import java.util.Objects;
@@ -46,7 +48,7 @@ public final class XposedManagerView implements DefaultLifecycleObserver {
 
     private Activity mActivity;
 
-    private TimeTicker ticker;
+    private BroadcastReceiver ticker;
 
     @SuppressLint("InflateParams")
     public XposedManagerView(Activity context, ViewGroup container) {
@@ -58,7 +60,8 @@ public final class XposedManagerView implements DefaultLifecycleObserver {
 
         WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         final Display defaultDisplay = windowManager.getDefaultDisplay();
-        Point screenSize = ScreenSizeCalculator.getInstance().getScreenSize(defaultDisplay);
+        Point screenSize = new Point();
+        defaultDisplay.getSize(screenSize);
         View containerRoot = container.getRootView();
         containerRoot.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
@@ -100,7 +103,13 @@ public final class XposedManagerView implements DefaultLifecycleObserver {
 
     @Override
     public void onResume(@NonNull LifecycleOwner owner) {
-        ticker = TimeTicker.registerNewReceiver(mActivity, this::updateTime);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_TIME_TICK);
+        filter.addAction(Intent.ACTION_TIME_CHANGED);
+        ticker = new BroadcastReceiver() {
+            @Override public void onReceive(Context c, Intent i) { updateTime(); }
+        };
+        mActivity.registerReceiver(ticker, filter);
         updateTime();
     }
 

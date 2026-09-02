@@ -197,7 +197,7 @@ class MainFragment : PreferenceFragmentCompat(), DarkPreferenceSupplier {
         when (preference.key) {
             DARK_PREFERENCE_START, DARK_PREFERENCE_END -> return false
 
-            DARK_PREFERENCE_WALLPAPER -> startActivity(Intent(requireActivity(), DarkWallpaperPickerActivity::class.java))
+            DARK_PREFERENCE_WALLPAPER -> startActivity(Intent(requireActivity(), me.ranko.autodark.ui.compose.DualWallpaperComposeActivity::class.java))
             "dark_mode_compose" -> startActivity(Intent(requireActivity(), me.ranko.autodark.ui.compose.MainComposeActivity::class.java))
 
             DARK_PREFERENCE_FORCE_ROOT -> viewModel.onForceDarkClicked(preference as SwitchPreference, lifecycleScope)

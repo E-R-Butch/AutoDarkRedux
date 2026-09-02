@@ -14,7 +14,6 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreference
-import com.android.wallpaper.util.ScreenSizeCalculator
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.*
@@ -143,17 +142,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application), D
             }
 
             if (darkSettings.isDarkMode() != oldNightMode) {
-                // change wallpaper too
-                val helper = DarkWallpaperHelper.getInstance(mContext, null)
-                if (helper.isDarWallpaperPersisted()) {
-                    helper.onBoot(oldNightMode.not())
-                    // workaround on A12, since activity get
-                    // recreated twice by wallpaper and dark mode changes
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        delay(1200L)
-                        summaryText.set(makeTriggeredSummary())
-                        return@launch
-                    }
+                // change wallpaper too - via WallpaperRepository
+                viewModelScope.launch {
+                    try {
+                        me.ranko.autodark.data.WallpaperRepository(mContext).apply(oldNightMode.not())
+                    } catch (_: Exception) {}
+                }
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                    delay(1200L)
+                    summaryText.set(makeTriggeredSummary())
+                    return@launch
                 }
                 delayedSummary = makeTriggeredSummary()
             } else {
@@ -321,7 +319,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application), D
 
             setContentView(binding.root)
 
-            val screenSize = ScreenSizeCalculator.getInstance().getScreenSize(activity)
+            val displayMetrics = activity.resources.displayMetrics
+            val screenSize = android.graphics.Point(displayMetrics.widthPixels, displayMetrics.heightPixels)
             val mBehavior = BottomSheetBehavior.from(binding.root.parent as ViewGroup)
             setOnShowListener { mBehavior.peekHeight = screenSize.y }
         }
