@@ -114,7 +114,24 @@ class MainViewModel(application: Application) : AndroidViewModel(application), D
      * */
     private fun triggerMasterSwitch(status: Boolean) {
         if (!AutoDarkApplication.checkSecurePermission(mContext)) {
-            // start permission activity
+            // Redux: try Shizuku auto-grant first (mature route)
+            val shizukuStatus = me.ranko.autodark.core.ShizukuApi.checkShizukuCompat(mContext)
+            if (shizukuStatus == me.ranko.autodark.core.ShizukuStatus.AVAILABLE) {
+                viewModelScope.launch {
+                    try {
+                        me.ranko.autodark.core.ShizukuApi.grantWithShizuku()
+                        if (AutoDarkApplication.checkSecurePermission(mContext)) {
+                            // granted via Shizuku, continue original flow
+                            triggerMasterSwitch(status)
+                            return@launch
+                        }
+                    } catch (_: Exception) {}
+                    // fallback to manual
+                    _requirePermission.value = true
+                }
+                return
+            }
+            // fallback: start permission activity for manual ADB/Root
             _requirePermission.value = true
             return
         }

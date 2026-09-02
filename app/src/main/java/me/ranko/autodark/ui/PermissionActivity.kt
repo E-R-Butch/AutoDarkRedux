@@ -116,8 +116,8 @@ class PermissionActivity : BaseListActivity(), ViewTreeObserver.OnGlobalLayoutLi
     }
 
     private fun initShizukuCard() {
-        val installed = ShizukuApi.isShizukuInstalled(this)
-        val viewStub = if (installed) binding.content.stubShizukuFirst else binding.content.stubShizukuLast
+        // Redux: Shizuku primary - always first, recommended
+        val viewStub = binding.content.stubShizukuFirst
         with(viewStub.viewStub!!.inflate() as PermissionLayout) {
             if (AutoDarkApplication.isSui) {
                 // Remove root permission when Sui is available
@@ -125,7 +125,8 @@ class PermissionActivity : BaseListActivity(), ViewTreeObserver.OnGlobalLayoutLi
             }
 
             description = getString(R.string.shizuku_description, title)
-            if (installed) {
+            val isInstalled = ShizukuApi.isShizukuInstalled(this@PermissionActivity)
+            if (isInstalled) {
                 val rotate = AnimationUtils.loadAnimation(context, R.anim.rotate_infinite)
                 titleIcon.startAnimation(rotate)
             }

@@ -139,7 +139,7 @@
 
     <string name="shizuku_connect_failed">无法连接到Shizuku 核心服务, 请确保Shizuku 正在运行.</string>
     <string name="shizuku_open_manager">打开 Shizuku</string>
-    <string name="shizuku_description">由<xliff:g name="shizuku_or_sui">%1$s</xliff:g> 直接授权</string>
+    <string name="shizuku_description">推荐: 由<xliff:g name="shizuku_or_sui">%1$s</xliff:g> 直接授权 (一键完成, 无需电脑)</string>
     <string name="shizuku_not_install">Shizuku 并未安装!</string>
     <string name="shizuku_service_not_running">Shizuku 服务未运行</string>
 

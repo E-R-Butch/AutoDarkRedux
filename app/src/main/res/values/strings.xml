@@ -115,7 +115,7 @@
     <string name="load_wallpaper_error_message">Unable to load wallpaper. The image is either corrupted or unavailable.</string>
 
     <string name="permission_title">Grant permission</string>
-    <string name="permission_description">AutoDark needs your permission to change the system dark mode. Use one of three ways below to grant that permission.</string>
+    <string name="permission_description">AutoDark needs to change system dark mode. Recommended: grant via Shizuku (one tap, no PC). ADB/Root fallback still available.</string>
     <string name="permission_granted">Permission granted</string>
     <string name="permission_failed">Failed to grant permission!</string>
 
@@ -142,7 +142,7 @@
 
     <string name="shizuku_connect_failed">Unable to connect the Shizuku core service, please make sure it is running.</string>
     <string name="shizuku_open_manager">Open Shizuku</string>
-    <string name="shizuku_description">Grant permission directly using <xliff:g name="shizuku_or_sui">%1$s</xliff:g>.</string>
+    <string name="shizuku_description">Recommended: Grant directly via <xliff:g name="shizuku_or_sui">%1$s</xliff:g> (one tap, no PC).</string>
     <string name="shizuku_not_install">Shizuku is not installed!</string>
     <string name="shizuku_service_not_running">Shizuku service is not running!</string>
 
