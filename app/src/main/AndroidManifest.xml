@@ -65,6 +65,11 @@
         <activity android:name=".ui.BlockListActivity" />
 
         <activity
+            android:name=".ui.compose.MainComposeActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme.Transparent.DarkActionBar" />
+
+        <activity
             android:name=".ui.DarkWallpaperPickerActivity"
             android:exported="false"
             android:resizeableActivity="false"

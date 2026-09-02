@@ -49,6 +49,11 @@
     </PreferenceCategory>
 
     <Preference
+        android:key="dark_mode_compose"
+        android:title="✨ Material 3 Compose 预览"
+        android:summary="查看新版 Material You 主界面 (Dynamic Color)" />
+
+    <Preference
         android:key="@string/pref_key_about"
         android:title="@string/app_about" />
 </PreferenceScreen>

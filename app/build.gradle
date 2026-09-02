@@ -1,6 +1,9 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.kapt'
+    id 'org.jetbrains.kotlin.plugin.compose' version '2.0.20'
+}
 
 android {
     namespace 'me.ranko.autodark'
@@ -28,6 +31,11 @@ android {
         buildConfig true
         // Determines whether to support Data Binding.
         dataBinding = true
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = '1.5.14'
     }
 
     buildTypes {
@@ -65,8 +73,18 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$ver_kotlin_coroutines"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$ver_kotlin_coroutines"
 
+    // Compose Material 3 (for Phase 4)
+    def composeBom = platform('androidx.compose:compose-bom:2024.11.00')
+    implementation composeBom
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.ui:ui-tooling-preview'
+    implementation 'androidx.compose.material3:material3'
+    implementation 'androidx.activity:activity-compose:1.9.3'
+    implementation 'androidx.lifecycle:lifecycle-runtime-compose:2.8.7'
+    implementation 'androidx.compose.runtime:runtime-livedata'
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+
     // LiveData
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$ver_lifecycle_extensions"
     // ViewModel
     implementation "androidx.lifecycle:lifecycle-common-java8:$ver_lifecycle_extensions"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$ver_lifecycle_extensions"
