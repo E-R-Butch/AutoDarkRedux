@@ -26,6 +26,7 @@ fun MainScreen(
     viewModel: MainViewModel,
     onPickStartTime: () -> Unit,
     onPickEndTime: () -> Unit,
+    onAutoModeClicked: () -> Unit,
 ) {
     val context = LocalContext.current
     val autoMode by viewModel.autoMode.observeAsState(false)
@@ -153,7 +154,7 @@ fun MainScreen(
                             }
                             Switch(
                                 checked = autoMode,
-                                onCheckedChange = { viewModel.onAutoModeClicked() }
+                                onCheckedChange = { onAutoModeClicked() }
                             )
                         }
                     }

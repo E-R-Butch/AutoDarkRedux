@@ -17,6 +17,7 @@ import android.view.View
 import android.widget.EditText
 import androidx.annotation.StringRes
 import androidx.collection.ArraySet
+import androidx.core.content.ContextCompat
 import androidx.databinding.ObservableField
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.*
@@ -195,7 +196,14 @@ class BlockListViewModel(application: Application) : AndroidViewModel(applicatio
     init {
         val filter = IntentFilter(ACTION_UPDATE_PROGRESS)
         filter.addAction(ACTION_SWITCH_INPUT_METHOD_RESULT)
-        mContext.registerReceiver(updateStatusReceiver, filter, PERMISSION_SEND_DARK_BROADCAST, null)
+        ContextCompat.registerReceiver(
+            mContext,
+            updateStatusReceiver,
+            filter,
+            PERMISSION_SEND_DARK_BROADCAST,
+            null,
+            ContextCompat.RECEIVER_EXPORTED
+        )
     }
 
     fun getAppName(app: ApplicationInfo): String = app.loadLabel(mPackageManager).toString()

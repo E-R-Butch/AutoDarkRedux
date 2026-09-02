@@ -3,7 +3,7 @@ package me.ranko.autodark.ui.widget
 import android.content.Context
 import android.util.AttributeSet
 import android.widget.Checkable
-import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatImageView
 
 /**
  * CheckedImageView
@@ -15,7 +15,7 @@ class CheckedImageView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
     defStyleRes: Int = 0
-) : ImageView(context, attrs, defStyleAttr, defStyleRes), Checkable {
+) : AppCompatImageView(context, attrs, defStyleAttr), Checkable {
 
     private var mChecked = true
 

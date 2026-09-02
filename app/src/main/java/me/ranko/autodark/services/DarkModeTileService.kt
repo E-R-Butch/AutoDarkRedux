@@ -1,10 +1,13 @@
 package me.ranko.autodark.services
 
+import android.annotation.SuppressLint
+import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.pm.PackageManager
+import android.os.Build
 import android.graphics.drawable.Icon
 import android.service.quicksettings.Tile
 import android.service.quicksettings.Tile.*
@@ -49,10 +52,26 @@ class DarkModeTileService : TileService() {
             darkSettings.setDarkMode(mTile.state != STATE_ACTIVE)
             mTile.updateTile()
         } else {
-            val intent = Intent(this, PermissionActivity::class.java)
-            intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
-            startActivityAndCollapse(intent)
+            val intent = Intent(this, PermissionActivity::class.java).apply {
+                addFlags(FLAG_ACTIVITY_NEW_TASK)
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                val pendingIntent = PendingIntent.getActivity(
+                    this,
+                    0,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+                startActivityAndCollapse(pendingIntent)
+            } else {
+                collapseLegacy(intent)
+            }
         }
+    }
+
+    @SuppressLint("StartActivityAndCollapseDeprecated")
+    private fun collapseLegacy(intent: Intent) {
+        startActivityAndCollapse(intent)
     }
 
     companion object {

@@ -109,7 +109,12 @@ class XposedManagerView(
                 updateTime()
             }
         }
-        currentActivity.registerReceiver(ticker, filter)
+        ContextCompat.registerReceiver(
+            currentActivity,
+            ticker,
+            filter,
+            ContextCompat.RECEIVER_EXPORTED
+        )
         updateTime()
     }
 

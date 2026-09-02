@@ -7,10 +7,16 @@ import android.content.res.TypedArray
 import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
-import androidx.core.content.res.TypedArrayUtils
 import androidx.preference.Preference
 import java.time.LocalTime
 import me.ranko.autodark.Utils.DarkTimeUtil
+
+private fun resolvePreferenceStyle(context: Context): Int {
+    val attributes = context.obtainStyledAttributes(intArrayOf(android.R.attr.preferenceStyle))
+    val style = attributes.getResourceId(0, android.R.attr.preferenceStyle)
+    attributes.recycle()
+    return style
+}
 
 /**
  * Display preference of Dark mode
@@ -32,7 +38,7 @@ class DarkDisplayPreference : Preference {
     constructor(context: Context, attrs: AttributeSet?) : this(
         context,
         attrs,
-        TypedArrayUtils.getAttr(context, android.R.attr.preferenceStyle, android.R.attr.preferenceStyle)
+        resolvePreferenceStyle(context)
     )
 
     constructor(context: Context) : this(context, null)

@@ -1,6 +1,7 @@
 package me.ranko.autodark.ui.compose
 
 import android.app.WallpaperManager
+import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -39,8 +40,11 @@ fun DualWallpaperScreen(
             saving = true
             scope.launch {
                 try {
-                    context.contentResolver.takePersistableUriPermission(uri, 1)
-                } catch (_: Exception) {}
+                    context.contentResolver.takePersistableUriPermission(
+                        uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    )
+                } catch (_: SecurityException) {}
                 repo.saveWallpaper(uri, false, WallpaperManager.FLAG_SYSTEM)
                 repo.saveWallpaper(uri, false, WallpaperManager.FLAG_LOCK)
                 lightPath = repo.getWallpaperPath(false, WallpaperManager.FLAG_SYSTEM)
@@ -51,7 +55,12 @@ fun DualWallpaperScreen(
         if (uri != null) {
             saving = true
             scope.launch {
-                try { context.contentResolver.takePersistableUriPermission(uri, 1) } catch (_: Exception) {}
+                try {
+                    context.contentResolver.takePersistableUriPermission(
+                        uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    )
+                } catch (_: SecurityException) {}
                 repo.saveWallpaper(uri, true, WallpaperManager.FLAG_SYSTEM)
                 repo.saveWallpaper(uri, true, WallpaperManager.FLAG_LOCK)
                 darkPath = repo.getWallpaperPath(true, WallpaperManager.FLAG_SYSTEM)

@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.util.Pair
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
+import androidx.core.content.ContextCompat
 import androidx.databinding.Observable
 import androidx.databinding.ObservableField
 import androidx.fragment.app.FragmentActivity
@@ -38,9 +39,14 @@ class MainFragment : PreferenceFragmentCompat(), DarkPreferenceSupplier {
 
     private inner class XposedAliveReceiver(val mContext: Context): BroadcastReceiver() {
         init {
-            mContext.registerReceiver(this,
-                    IntentFilter(BlockListReceiver.ACTION_ALIVE),
-                    Constant.PERMISSION_SEND_DARK_BROADCAST, null)
+            ContextCompat.registerReceiver(
+                mContext,
+                this,
+                IntentFilter(BlockListReceiver.ACTION_ALIVE),
+                Constant.PERMISSION_SEND_DARK_BROADCAST,
+                null,
+                ContextCompat.RECEIVER_EXPORTED
+            )
             BlockListReceiver.sendIsAliveBroadcast(mContext)
         }
 

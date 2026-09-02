@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
+import androidx.core.content.ContextCompat
 import de.robv.android.xposed.XposedBridge
 import me.ranko.autodark.BuildConfig
 import me.ranko.autodark.Constant
@@ -58,7 +59,14 @@ class BlockListReceiver private constructor(context: Context, private val hooker
             filter.addAction(ACTION_ALIVE_ACK)
             filter.addAction(ACTION_SWITCH_INPUT_METHOD_HOOK)
             filter.addAction(Intent.ACTION_SHUTDOWN)
-            context.registerReceiver(receiver, filter, Constant.PERMISSION_SEND_DARK_BROADCAST, null)
+            ContextCompat.registerReceiver(
+                context,
+                receiver,
+                filter,
+                Constant.PERMISSION_SEND_DARK_BROADCAST,
+                null,
+                ContextCompat.RECEIVER_EXPORTED
+            )
         }
 
         fun sendNewList(context: Context, blockList: ArrayList<String>) {

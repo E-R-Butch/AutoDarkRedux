@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.IPackageManager
 import android.content.pm.PackageManager
-import androidx.annotation.NonNull
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import me.ranko.autodark.AutoDarkApplication
@@ -106,7 +105,7 @@ object ShizukuApi {
      * @param context Context
      * @return true if Shizuku or Sui is installed
      */
-    fun isShizukuInstalled(@NonNull context: Context): Boolean {
+    fun isShizukuInstalled(context: Context): Boolean {
         if (AutoDarkApplication.isSui) return true
         return try {
             context.packageManager.getPermissionInfo(ShizukuProvider.PERMISSION, 0) != null

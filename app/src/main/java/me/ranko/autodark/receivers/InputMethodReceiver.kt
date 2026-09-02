@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.SystemProperties
 import android.util.Log
+import androidx.core.content.ContextCompat
 import de.robv.android.xposed.XposedBridge
 import me.ranko.autodark.BuildConfig
 import me.ranko.autodark.Constant
@@ -32,7 +33,12 @@ class InputMethodReceiver(context: Context, private val hooker: ATMHooker): Broa
             val receiver = InputMethodReceiver(context, hooker)
             val filter = IntentFilter(ACTION_INPUT_METHOD)
             filter.addAction(Intent.ACTION_SHUTDOWN)
-            context.registerReceiver(receiver, filter)
+            ContextCompat.registerReceiver(
+                context,
+                receiver,
+                filter,
+                ContextCompat.RECEIVER_EXPORTED
+            )
             INSTANCE = receiver
         }
 

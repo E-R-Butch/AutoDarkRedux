@@ -3,9 +3,9 @@ package me.ranko.autodark.ui.widget
 import android.content.Context
 import android.content.res.ColorStateList
 import android.util.AttributeSet
-import android.widget.ImageView
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import me.ranko.autodark.R
 
@@ -19,7 +19,7 @@ class MaterialCircleIconView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = R.attr.materialCircleIconViewStyle,
     defStyleRes: Int = R.style.MaterialCircleIconView
-) : ImageView(context, attrs, defStyleAttr, defStyleRes) {
+) : AppCompatImageView(context, attrs, defStyleAttr) {
 
     var iconForegroundChroma: String = "50"
         set(value) {
