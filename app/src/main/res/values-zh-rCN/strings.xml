@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_about">关于 AutoDark</string>
+    <string name="app_about">关于 AutoDark Redux</string>
     <string name="app_confirm">好的</string>
     <string name="app_delete">删除</string>
     <string name="app_do_not_show">不再显示</string>
@@ -17,9 +17,9 @@
     <string name="app_xposed_option">Xposed 选项</string>
 
     <string name="app_restricted">一些厂商(比如一加)会为了优化电池而限制应用后台.
-        "\n这会让AutoDark 无法在正确的时间醒来并且为您切换夜间模式. 请参考 <a href='https://dontkillmyapp.com/'>dontkillmyapp.com</a>获取解决方案."
-        "\n如果您使用了某种优化软件/电池优化大师之类的, 请将AutoDark 添加到他们的白名单中."
-        "\n无需担心耗电问题, AutoDark 使用闹钟来工作, 参阅: developer.android.google.cn/reference/android/app/AlarmManager."
+        "\n这会让AutoDark Redux 无法在正确的时间醒来并且为您切换夜间模式. 请参考 <a href='https://dontkillmyapp.com/'>dontkillmyapp.com</a>获取解决方案."
+        "\n如果您使用了某种优化软件/电池优化大师之类的, 请将AutoDark Redux 添加到他们的白名单中."
+        "\n无需担心耗电问题, AutoDark Redux 使用闹钟来工作, 参阅: developer.android.google.cn/reference/android/app/AlarmManager."
     </string>
     <string name="app_restricted_title">某些设备上会出现问题</string>
     <string name="app_restricted_warning">发现问题</string>
@@ -42,7 +42,7 @@
 
 
     <string name="feedback_send">发送邮件</string>
-    <string name="feedback_subject">AutoDark 反馈</string>
+    <string name="feedback_subject">AutoDark Redux 反馈</string>
 
     <string name="pref_block_title">SmartDark 黑名单%1$s</string>
     <string name="pref_block_summary">您添加到名单里的应用不会被强制SmartDark</string>
@@ -50,7 +50,7 @@
     <string name="pref_category_dev">试验性功能</string>
     <string name="pref_bug_title">报告bug</string>
     <string name="pref_category_time">设置开始与结束时间</string>
-    <string name="pref_dark_wallpaper_title">AutoDark 壁纸</string>
+    <string name="pref_dark_wallpaper_title">AutoDark Redux 壁纸</string>
     <string name="pref_dark_wallpaper_summary">根据设置的时间自动切换亮色与暗色壁纸</string>
     <string name="pref_feedback_title">反馈</string>
     <string name="pref_feedback_summary">欢迎提出任何建议</string>
@@ -90,9 +90,48 @@
 
 
     <string name="permission_title">授予权限</string>
-    <string name="permission_description">AutoDark 需要您的授权以更改系统黑暗模式. 使用下列三种方式之一来授予该权限.</string>
+    <string name="permission_description">AutoDark Redux 需要系统深色模式控制权限。使用下方 Shizuku 授予或检查权限。</string>
     <string name="permission_granted">权限已授予</string>
     <string name="permission_failed">获取权限失败!</string>
+    <string name="shizuku_permission_entry_title">Shizuku 授权</string>
+    <string name="shizuku_status_available">Shizuku 服务运行中，AutoDark Redux 已获授权</string>
+    <string name="shizuku_status_dead">Shizuku 服务未运行</string>
+    <string name="shizuku_status_unauthorized">AutoDark Redux 尚未获得 Shizuku 授权</string>
+    <string name="shizuku_status_not_installed">未安装 Shizuku</string>
+    <string name="shizuku_status_available_short">运行中</string>
+    <string name="shizuku_status_dead_short">未运行</string>
+    <string name="shizuku_status_unauthorized_short">未授权</string>
+    <string name="shizuku_status_not_installed_short">未安装</string>
+    <string name="secure_permission_status_granted">系统控制权限：已授予</string>
+    <string name="secure_permission_status_missing">系统控制权限：未授予</string>
+    <string name="auto_mode_title">自动模式</string>
+    <string name="auto_mode_description">根据实际所在地计算日出日落；不可用时采用粗略的时区参考点</string>
+    <string name="schedule_summary_automatic">跟随所在地日出日落</string>
+    <string name="schedule_summary_custom">自定义时间</string>
+    <string name="schedule_start_time">开启时间</string>
+    <string name="schedule_end_time">关闭时间</string>
+    <string name="location_source_title">日出日落位置</string>
+    <string name="automatic_location_summary">自动：优先使用设备定位，不可用时采用粗略时区参考点</string>
+    <string name="manual_city_summary"><xliff:g name="city">%1$s</xliff:g>，<xliff:g name="country">%2$s</xliff:g> · 手动城市\n<xliff:g name="time_zone">%3$s</xliff:g></string>
+    <string name="location_source_change">更改</string>
+    <string name="city_picker_title">选择城市</string>
+    <string name="city_search_hint">离线搜索全球城市</string>
+    <string name="city_search_empty">离线城市库中没有匹配结果</string>
+    <string name="restore_automatic_location">恢复自动定位</string>
+    <string name="manual_city_selected">已选择手动城市，并刷新太阳时间与闹钟</string>
+    <string name="automatic_location_restored">已恢复自动定位，并刷新太阳时间与闹钟</string>
+    <string name="manual_city_update_failed">位置更新失败，已保留原设置</string>
+    <string name="dual_wallpaper_title">日夜壁纸</string>
+    <string name="dual_wallpaper_summary">根据日间和夜间自动切换壁纸与动态配色</string>
+    <string name="advanced_settings_title">高级设置与关于</string>
+    <string name="advanced_settings_summary">Force Dark、Xposed、黑名单、许可证和项目信息</string>
+    <string name="home_state_enabled">调度运行中</string>
+    <string name="home_state_disabled">调度已暂停</string>
+    <string name="home_location_title">位置</string>
+    <string name="home_location_automatic">自动定位</string>
+    <string name="home_wallpaper_title">壁纸</string>
+    <string name="home_wallpaper_summary">日间 + 夜间</string>
+    <string name="home_permission_action">完成授权</string>
 
 
     <string name="root_check_failed">获取 Root 权限失败</string>

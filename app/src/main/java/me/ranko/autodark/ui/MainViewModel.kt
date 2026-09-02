@@ -22,6 +22,7 @@ import me.ranko.autodark.receivers.DarkModeAlarmReceiver
 import me.ranko.autodark.Utils.DarkTimeUtil
 import me.ranko.autodark.Utils.ViewUtil
 import me.ranko.autodark.core.DarkModeSettings
+import me.ranko.autodark.data.CityReference
 import me.ranko.autodark.databinding.DialogBottomResstrictedBinding
 import timber.log.Timber
 
@@ -56,6 +57,20 @@ class MainViewModel(application: Application) : AndroidViewModel(application), D
      * */
     val autoMode: LiveData<Boolean>
         get() = _autoMode
+
+    private val _manualCity = MutableLiveData(darkSettings.getManualCity())
+    val manualCity: LiveData<CityReference?>
+        get() = _manualCity
+
+    private val _citySearchResults = MutableLiveData<List<CityReference>>(emptyList())
+    val citySearchResults: LiveData<List<CityReference>>
+        get() = _citySearchResults
+
+    private val _citySearchInProgress = MutableLiveData(false)
+    val citySearchInProgress: LiveData<Boolean>
+        get() = _citySearchInProgress
+
+    private var citySearchJob: Job? = null
 
     /**
      * An observable summary text message
@@ -122,9 +137,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application), D
                 }
                 _requirePermission.value = true
             }
-            return
-            // fallback: start permission activity for manual ADB/Root
-            _requirePermission.value = true
             return
         }
 
@@ -211,26 +223,50 @@ class MainViewModel(application: Application) : AndroidViewModel(application), D
      * Called when auto mode is clicked
      * */
     fun onAutoModeClicked() = viewModelScope.launch(Dispatchers.Main) {
-        // notify user turn location on
-        if (!darkSettings.isAutoMode() && !darkSettings.isLocationEnabled()) {
-            _summaryText.value = newSummary(R.string.app_location_disabled)
-        } else {
-            val old = darkSettings.isDarkMode() ?: false
-            val result = darkSettings.triggerAutoMode()
-            if (result) {
-                // send delay message if dark mode changed
-                if (old.xor(darkSettings.isDarkMode() == true)) {
-                    delayedSummary = makeTriggeredSummary()
-                } else {
-                    _summaryText.value = makeTriggeredSummary()
-                }
+        val old = darkSettings.isDarkMode() ?: false
+        val result = darkSettings.triggerAutoMode()
+        if (result) {
+            // send delay message if dark mode changed
+            if (old.xor(darkSettings.isDarkMode() == true)) {
+                delayedSummary = makeTriggeredSummary()
             } else {
-                _summaryText.value = newSummary(R.string.app_location_failed)
+                _summaryText.value = makeTriggeredSummary()
             }
+        } else {
+            _summaryText.value = newSummary(R.string.app_location_failed)
         }
 
         // send auto mode status as result
         _autoMode.value = darkSettings.isAutoMode()
+    }
+
+    fun searchCities(query: String) {
+        citySearchJob?.cancel()
+        citySearchJob = viewModelScope.launch {
+            _citySearchInProgress.value = true
+            delay(120L)
+            _citySearchResults.value = darkSettings.searchCities(query)
+            _citySearchInProgress.value = false
+        }
+    }
+
+    fun selectManualCity(city: CityReference) {
+        updateManualCity(city, R.string.manual_city_selected)
+    }
+
+    fun restoreAutomaticLocation() {
+        updateManualCity(null, R.string.automatic_location_restored)
+    }
+
+    private fun updateManualCity(city: CityReference?, @StringRes successMessage: Int) {
+        viewModelScope.launch {
+            if (darkSettings.setManualCity(city)) {
+                _manualCity.value = darkSettings.getManualCity()
+                _summaryText.value = newSummary(successMessage)
+            } else {
+                _summaryText.value = newSummary(R.string.manual_city_update_failed)
+            }
+        }
     }
 
     fun onRequirePermissionConsumed() {
@@ -238,12 +274,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application), D
     }
 
     fun onLocationPermissionResult(granted: Boolean) {
-        if (granted) {
-            onAutoModeClicked()
-        } else {
-            _autoMode.value = granted
-        }
-        showPermissionSummary(granted)
+        // A denial still proceeds through private cache and the coarse bundled
+        // time-zone reference. Permission only controls the framework-provider leg.
+        onAutoModeClicked()
     }
 
     fun onSecurePermissionResult() {

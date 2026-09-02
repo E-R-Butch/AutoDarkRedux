@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_about">O aplikacji AutoDark</string>
+    <string name="app_about">O aplikacji AutoDark Redux</string>
     <string name="app_confirm">OK</string>
     <string name="app_do_not_show">Nie wyświetlaj więcej</string>
     <string name="app_later">Przypomnij mi później</string>
@@ -8,9 +8,9 @@
     <string name="app_location_disabled">Lokalizacja jest wyłączona.</string>
 
     <string name="app_restricted">Niektórzy producenci (np. OnePlus) ograniczają aplikacjom możliwość działania w tle dla zaoszczędzenia baterii.
-        "\nTo powoduje, że AutoDark może nie działać w tle i ustawiać trybu nocnego automatycznie. Dla rozwiązania, proszę przeczytać <a href='https://dontkillmyapp.com/'>dontkillmyapp.com</a>."
-        "\nJeśli używany jest optymalizator/aplikacja oszczędzająca baterię, proszę o dodanie AutoDark do jej białej listy."
-        "\nDon\'t worry about the battery, AutoDark uses alarm to work, see also: developer.android.com/reference/android/app/AlarmManager."
+        "\nTo powoduje, że AutoDark Redux może nie działać w tle i ustawiać trybu nocnego automatycznie. Dla rozwiązania, proszę przeczytać <a href='https://dontkillmyapp.com/'>dontkillmyapp.com</a>."
+        "\nJeśli używany jest optymalizator/aplikacja oszczędzająca baterię, proszę o dodanie AutoDark Redux do jej białej listy."
+        "\nDon\'t worry about the battery, AutoDark Redux uses alarm to work, see also: developer.android.com/reference/android/app/AlarmManager."
     </string>
     <string name="app_restricted_title">Problemy na niektórych urządzeniach</string>
     <string name="app_restricted_warning">Wykryto problem</string>
@@ -25,7 +25,7 @@
     <string name="dark_mode_summary_will_on">Włączy tryb nocny o <xliff:g name="time">%1$s</xliff:g></string>
 
     <string name="feedback_send">Wysłać email</string>
-    <string name="feedback_subject">AutoDark Sprzężenie zwrotne</string>
+    <string name="feedback_subject">AutoDark Redux Sprzężenie zwrotne</string>
 
     <string name="pref_category_dev">Funkcjonalność eksperymentalna</string>
     <string name="pref_category_time">Ustal czas rozpoczęcia i zakończenia.</string>
@@ -52,9 +52,48 @@
 
 
     <string name="permission_title">Przyznaj uprawnienia</string>
-    <string name="permission_description">AutoDark potrzebuje uprawnień, by zmienić systemowy tryb nocny. Użyj jednej z poniższych metod, by przyznać uprawnienia.</string>
+    <string name="permission_description">AutoDark Redux potrzebuje uprawnień, by zmienić systemowy tryb nocny. Użyj jednej z poniższych metod, by przyznać uprawnienia.</string>
     <string name="permission_granted">Uprawnienia przyznane.</string>
     <string name="permission_failed">Nie udało się przyznać uprawnień!</string>
+    <string name="shizuku_permission_entry_title">Autoryzacja Shizuku</string>
+    <string name="shizuku_status_available">Usługa Shizuku działa, a AutoDark Redux ma autoryzację.</string>
+    <string name="shizuku_status_dead">Usługa Shizuku nie działa.</string>
+    <string name="shizuku_status_unauthorized">AutoDark Redux nie ma jeszcze autoryzacji w Shizuku.</string>
+    <string name="shizuku_status_not_installed">Shizuku nie jest zainstalowane.</string>
+    <string name="shizuku_status_available_short">Działa</string>
+    <string name="shizuku_status_dead_short">Zatrzymane</string>
+    <string name="shizuku_status_unauthorized_short">Brak autoryzacji</string>
+    <string name="shizuku_status_not_installed_short">Nie zainstalowano</string>
+    <string name="secure_permission_status_granted">Uprawnienie sterowania systemem: przyznane.</string>
+    <string name="secure_permission_status_missing">Uprawnienie sterowania systemem: nieprzyznane.</string>
+    <string name="auto_mode_title">Tryb automatyczny</string>
+    <string name="auto_mode_description">Oblicza wschód i zachód słońca dla rzeczywistej lokalizacji; gdy jest niedostępna, używa zgrubnego, przybliżonego punktu odniesienia strefy czasowej.</string>
+    <string name="schedule_summary_automatic">Podąża za lokalnym wschodem i zachodem słońca</string>
+    <string name="schedule_summary_custom">Własny harmonogram</string>
+    <string name="schedule_start_time">Godzina rozpoczęcia</string>
+    <string name="schedule_end_time">Godzina zakończenia</string>
+    <string name="location_source_title">Lokalizacja wschodu i zachodu słońca</string>
+    <string name="automatic_location_summary">Automatycznie: najpierw lokalizacja urządzenia, potem zgrubny punkt strefy czasowej</string>
+    <string name="manual_city_summary"><xliff:g name="city">%1$s</xliff:g>, <xliff:g name="country">%2$s</xliff:g> · Miasto wybrane ręcznie\n<xliff:g name="time_zone">%3$s</xliff:g></string>
+    <string name="location_source_change">Zmień</string>
+    <string name="city_picker_title">Wybierz miasto</string>
+    <string name="city_search_hint">Wyszukaj miasto na świecie offline</string>
+    <string name="city_search_empty">Brak pasującego miasta w katalogu offline.</string>
+    <string name="restore_automatic_location">Przywróć automatyczną lokalizację</string>
+    <string name="manual_city_selected">Wybrano miasto ręcznie. Czasy słoneczne i alarmy zostały odświeżone.</string>
+    <string name="automatic_location_restored">Przywrócono automatyczną lokalizację. Czasy słoneczne i alarmy zostały odświeżone.</string>
+    <string name="manual_city_update_failed">Nie udało się zmienić lokalizacji. Zachowano poprzednie ustawienie.</string>
+    <string name="dual_wallpaper_title">Jasna i ciemna tapeta</string>
+    <string name="dual_wallpaper_summary">Automatyczne przełączanie tapet dnia i nocy wraz z kolorami dynamicznymi</string>
+    <string name="advanced_settings_title">Ustawienia zaawansowane i informacje</string>
+    <string name="advanced_settings_summary">Force Dark, Xposed, lista blokad, licencje i informacje o projekcie</string>
+    <string name="home_state_enabled">Harmonogram aktywny</string>
+    <string name="home_state_disabled">Harmonogram wstrzymany</string>
+    <string name="home_location_title">Lokalizacja</string>
+    <string name="home_location_automatic">Automatyczna</string>
+    <string name="home_wallpaper_title">Tapety</string>
+    <string name="home_wallpaper_summary">Dzień + noc</string>
+    <string name="home_permission_action">Dokończ konfigurację</string>
 
     <string name="root_check_failed">Uzyzkanie uprawnień root nie powiodło się!</string>
     <string name="root_description">Jeśli posiadany jest dostęp do uprawnień root, można tak przyznać uprawnienia.</string>
@@ -86,7 +125,7 @@
     <string name="pref_block_summary">Wybrane aplikacje nie będą otrzymywać Force Dark</string>
     <string name="pref_bug_title">Zgłoś błąd</string>
     <string name="pref_contact">Skontaktuj się ze mną</string>
-    <string name="pref_dark_wallpaper_title">Tapeta AutoDark</string>
+    <string name="pref_dark_wallpaper_title">Tapeta AutoDark Redux</string>
     <string name="pref_dark_wallpaper_summary">Zmieniaj jasną i ciemną tapetę zgodnie z harmonogramem</string>
     <string name="pref_feedback_title">Opinie</string>
     <string name="pref_feedback_summary">Wszelkie sugestie są mile widziane</string>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_about">About AutoDark</string>
+    <string name="app_about">About AutoDark Redux</string>
     <string name="app_confirm">OK</string>
     <string name="app_delete">Delete</string>
     <string name="app_do_not_show">Do not show this again</string>
@@ -17,9 +17,9 @@
     <string name="app_xposed_option">Xposed Options</string>
 
     <string name="app_restricted">Some vendors (like Oneplus) restrict app background activity to optimize their battery.
-        "\nThis makes AutoDark can not wake up in time and switch dark mode for you. Please refer to <a href='https://dontkillmyapp.com/'>dontkillmyapp.com</a> for solution."
-        "\nAlso, if you are using some kind of optimizer/battery saver app, please add AutoDark to their white list."
-        "\nDon\'t worry about the battery, AutoDark uses alarm to work, see also: developer.android.com/reference/android/app/AlarmManager."
+        "\nThis makes AutoDark Redux can not wake up in time and switch dark mode for you. Please refer to <a href='https://dontkillmyapp.com/'>dontkillmyapp.com</a> for solution."
+        "\nAlso, if you are using some kind of optimizer/battery saver app, please add AutoDark Redux to their white list."
+        "\nDon\'t worry about the battery, AutoDark Redux uses alarm to work, see also: developer.android.com/reference/android/app/AlarmManager."
     </string>
     <string name="app_restricted_title">Problems on some devices</string>
     <string name="app_restricted_warning">Problems detected</string>
@@ -43,7 +43,7 @@
 
 
     <string name="feedback_send">Send Email</string>
-    <string name="feedback_subject">AutoDark Feedback</string>
+    <string name="feedback_subject">AutoDark Redux Feedback</string>
 
     <string name="pref_block_title">Force Dark Block List%1$s</string>
     <string name="pref_block_summary">The apps that you choose won\'t get Force-Dark</string>
@@ -51,7 +51,7 @@
     <string name="pref_contact">Contact me</string>
     <string name="pref_category_dev">Experimental features</string>
     <string name="pref_category_time">Schedule start and end time.</string>
-    <string name="pref_dark_wallpaper_title">AutoDark wallpaper</string>
+    <string name="pref_dark_wallpaper_title">AutoDark Redux wallpaper</string>
     <string name="pref_dark_wallpaper_summary">Change dark/light wallpapers base on scheduled time</string>
     <string name="pref_feedback_title">Feedback</string>
     <string name="pref_feedback_summary">Any suggestions are welcome</string>
@@ -92,9 +92,48 @@
 
 
     <string name="permission_title">Grant permission</string>
-    <string name="permission_description">AutoDark needs to change system dark mode. Recommended: grant via Shizuku (one tap, no PC). ADB/Root fallback still available.</string>
+    <string name="permission_description">AutoDark Redux needs authorization to control system dark mode. Use Shizuku below to grant or verify the permission.</string>
     <string name="permission_granted">Permission granted</string>
     <string name="permission_failed">Failed to grant permission!</string>
+    <string name="shizuku_permission_entry_title">Shizuku authorization</string>
+    <string name="shizuku_status_available">Shizuku service is running and authorized.</string>
+    <string name="shizuku_status_dead">Shizuku service is not running.</string>
+    <string name="shizuku_status_unauthorized">AutoDark Redux is not authorized in Shizuku.</string>
+    <string name="shizuku_status_not_installed">Shizuku is not installed.</string>
+    <string name="shizuku_status_available_short">Running</string>
+    <string name="shizuku_status_dead_short">Stopped</string>
+    <string name="shizuku_status_unauthorized_short">Unauthorized</string>
+    <string name="shizuku_status_not_installed_short">Not installed</string>
+    <string name="secure_permission_status_granted">System control permission: granted.</string>
+    <string name="secure_permission_status_missing">System control permission: not granted.</string>
+    <string name="auto_mode_title">Automatic mode</string>
+    <string name="auto_mode_description">Calculate sunrise and sunset from the actual location; if unavailable, use a coarse, approximate time-zone reference point.</string>
+    <string name="schedule_summary_automatic">Follows local sunrise and sunset</string>
+    <string name="schedule_summary_custom">Custom schedule</string>
+    <string name="schedule_start_time">Start time</string>
+    <string name="schedule_end_time">End time</string>
+    <string name="location_source_title">Sunrise and sunset location</string>
+    <string name="automatic_location_summary">Automatic: device location first; coarse time-zone reference if unavailable</string>
+    <string name="manual_city_summary"><xliff:g name="city">%1$s</xliff:g>, <xliff:g name="country">%2$s</xliff:g> · Manual city\n<xliff:g name="time_zone">%3$s</xliff:g></string>
+    <string name="location_source_change">Change</string>
+    <string name="city_picker_title">Choose a city</string>
+    <string name="city_search_hint">Search cities worldwide</string>
+    <string name="city_search_empty">No matching city in the offline catalog.</string>
+    <string name="restore_automatic_location">Restore automatic location</string>
+    <string name="manual_city_selected">Manual city selected. Solar times and alarms refreshed.</string>
+    <string name="automatic_location_restored">Automatic location restored. Solar times and alarms refreshed.</string>
+    <string name="manual_city_update_failed">Could not update the location. The previous setting was kept.</string>
+    <string name="dual_wallpaper_title">Light and dark wallpapers</string>
+    <string name="dual_wallpaper_summary">Automatically switch day and night wallpapers with dynamic colors</string>
+    <string name="advanced_settings_title">Advanced settings and about</string>
+    <string name="advanced_settings_summary">Force Dark, Xposed, block list, licenses, and project information</string>
+    <string name="home_state_enabled">Schedule active</string>
+    <string name="home_state_disabled">Schedule paused</string>
+    <string name="home_location_title">Location</string>
+    <string name="home_location_automatic">Automatic</string>
+    <string name="home_wallpaper_title">Wallpapers</string>
+    <string name="home_wallpaper_summary">Day + night pair</string>
+    <string name="home_permission_action">Finish setup</string>
 
 
     <string name="root_check_failed">Failed to get root permission!</string>

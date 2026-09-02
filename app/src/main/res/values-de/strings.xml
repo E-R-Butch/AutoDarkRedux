@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_about">Über AutoDark</string>
+    <string name="app_about">Über AutoDark Redux</string>
     <string name="app_confirm">OK</string>
     <string name="app_do_not_show">Nicht erneut zeigen</string>
     <string name="app_later">Später erinnern</string>
@@ -8,9 +8,9 @@
     <string name="app_location_disabled">Standort ist ausgeschaltet.</string>
 
     <string name="app_restricted">Manche Hersteller (wie Oneplus) beschränken App-Hintergrundaktivität um den Akku zu optimieren.
-        "\nAutoDark kann deshalb nicht rechtzeitig aufwachen und den Dark Mode aktivieren. Für eine Lösung bitte <a href='https://dontkillmyapp.com/'>dontkillmyapp.com</a> konsultieren."
-        "\nWenn eine Art optimizer/battery saver app benutzt wird, bitte AutoDark zur white list hinzufügen."
-        "\nDon\'t worry about the battery, AutoDark uses alarm to work, see also: developer.android.com/reference/android/app/AlarmManager."
+        "\nAutoDark Redux kann deshalb nicht rechtzeitig aufwachen und den Dark Mode aktivieren. Für eine Lösung bitte <a href='https://dontkillmyapp.com/'>dontkillmyapp.com</a> konsultieren."
+        "\nWenn eine Art optimizer/battery saver app benutzt wird, bitte AutoDark Redux zur white list hinzufügen."
+        "\nDon\'t worry about the battery, AutoDark Redux uses alarm to work, see also: developer.android.com/reference/android/app/AlarmManager."
     </string>
     <string name="app_restricted_title">Probleme bei manchen Geräten</string>
     <string name="app_restricted_warning">Probleme erkannt</string>
@@ -30,7 +30,7 @@
     <string name="dark_mode_summary_will_on">Schaltet Dark Mode ein um <xliff:g name="time">%1$s</xliff:g></string>
 
     <string name="feedback_send">Email senden</string>
-    <string name="feedback_subject">AutoDark Feedback</string>
+    <string name="feedback_subject">AutoDark Redux Feedback</string>
 
     <string name="pref_block_title">Force Dark Blockliste%1$s</string>
     <string name="pref_block_summary">Ausgewählte Apps werden nicht in den Force-Dark-Modus gezwungen</string>
@@ -72,9 +72,48 @@
 
 
     <string name="permission_title">Berechtigung erteilen</string>
-    <string name="permission_description">AutoDark benötigt die Berechtigung um den System-Dark-Mode zu ändern. Eine der drei folgenden Methoden verwenden um die Berechtigung zu erteilen.</string>
+    <string name="permission_description">AutoDark Redux benötigt die Berechtigung um den System-Dark-Mode zu ändern. Eine der drei folgenden Methoden verwenden um die Berechtigung zu erteilen.</string>
     <string name="permission_granted">Berechtigung erteilt</string>
     <string name="permission_failed">Berechtigung erteilen ist fehlgeschlagen!</string>
+    <string name="shizuku_permission_entry_title">Shizuku-Berechtigung</string>
+    <string name="shizuku_status_available">Der Shizuku-Dienst läuft und AutoDark Redux ist autorisiert.</string>
+    <string name="shizuku_status_dead">Der Shizuku-Dienst läuft nicht.</string>
+    <string name="shizuku_status_unauthorized">AutoDark Redux ist in Shizuku noch nicht autorisiert.</string>
+    <string name="shizuku_status_not_installed">Shizuku ist nicht installiert.</string>
+    <string name="shizuku_status_available_short">Aktiv</string>
+    <string name="shizuku_status_dead_short">Gestoppt</string>
+    <string name="shizuku_status_unauthorized_short">Nicht autorisiert</string>
+    <string name="shizuku_status_not_installed_short">Nicht installiert</string>
+    <string name="secure_permission_status_granted">Systemsteuerungsberechtigung: erteilt.</string>
+    <string name="secure_permission_status_missing">Systemsteuerungsberechtigung: nicht erteilt.</string>
+    <string name="auto_mode_title">Automatikmodus</string>
+    <string name="auto_mode_description">Berechnet Sonnenaufgang und Sonnenuntergang am tatsächlichen Standort; falls nicht verfügbar, wird ein grober, ungefährer Zeitzonen-Referenzpunkt verwendet.</string>
+    <string name="schedule_summary_automatic">Folgt dem lokalen Sonnenaufgang und Sonnenuntergang</string>
+    <string name="schedule_summary_custom">Benutzerdefinierter Zeitplan</string>
+    <string name="schedule_start_time">Startzeit</string>
+    <string name="schedule_end_time">Endzeit</string>
+    <string name="location_source_title">Standort für Sonnenaufgang und Sonnenuntergang</string>
+    <string name="automatic_location_summary">Automatisch: zuerst Gerätestandort, sonst grober Zeitzonen-Referenzpunkt</string>
+    <string name="manual_city_summary"><xliff:g name="city">%1$s</xliff:g>, <xliff:g name="country">%2$s</xliff:g> · Manuelle Stadt\n<xliff:g name="time_zone">%3$s</xliff:g></string>
+    <string name="location_source_change">Ändern</string>
+    <string name="city_picker_title">Stadt auswählen</string>
+    <string name="city_search_hint">Weltweit offline nach Städten suchen</string>
+    <string name="city_search_empty">Keine passende Stadt im Offline-Katalog.</string>
+    <string name="restore_automatic_location">Automatischen Standort wiederherstellen</string>
+    <string name="manual_city_selected">Manuelle Stadt ausgewählt. Sonnenzeiten und Alarme wurden aktualisiert.</string>
+    <string name="automatic_location_restored">Automatischer Standort wiederhergestellt. Sonnenzeiten und Alarme wurden aktualisiert.</string>
+    <string name="manual_city_update_failed">Standort konnte nicht aktualisiert werden. Die vorherige Einstellung wurde beibehalten.</string>
+    <string name="dual_wallpaper_title">Helle und dunkle Hintergrundbilder</string>
+    <string name="dual_wallpaper_summary">Hintergrundbilder und dynamische Farben automatisch zwischen Tag und Nacht wechseln</string>
+    <string name="advanced_settings_title">Erweiterte Einstellungen und Info</string>
+    <string name="advanced_settings_summary">Force Dark, Xposed, Blockliste, Lizenzen und Projektinformationen</string>
+    <string name="home_state_enabled">Zeitplan aktiv</string>
+    <string name="home_state_disabled">Zeitplan pausiert</string>
+    <string name="home_location_title">Standort</string>
+    <string name="home_location_automatic">Automatisch</string>
+    <string name="home_wallpaper_title">Hintergründe</string>
+    <string name="home_wallpaper_summary">Tag + Nacht</string>
+    <string name="home_permission_action">Einrichtung abschließen</string>
 
     <string name="root_check_failed">Root Berechtigung wurde abgelehnt!</string>
     <string name="root_description">Wenn das Gerät gerootet ist kann die Berechtigung damit erteilt werden.</string>
@@ -106,7 +145,7 @@
     <string name="block_edit_title">Blockliste bearbeiten</string>
     <string name="block_edit_package_hint">Paketname</string>
     <string name="block_edit_package_error">Ungültiger Paketname</string>
-    <string name="pref_dark_wallpaper_title">AutoDark-Hintergrundbild</string>
+    <string name="pref_dark_wallpaper_title">AutoDark Redux-Hintergrundbild</string>
     <string name="pref_dark_wallpaper_summary">Dunkle/helle Hintergrundbilder nach Zeitplan wechseln</string>
     <string name="activation_scope">Aktivierungsbereich (erforderlich)</string>
     <string name="activation_scope_description">Öffne die Modulseite des LSPosed-Managers und füge die Eingabemethode wie folgt zum Aktivierungsbereich hinzu:</string>

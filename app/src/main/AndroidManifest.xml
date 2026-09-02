@@ -66,8 +66,14 @@
 
         <activity
             android:name=".ui.compose.MainComposeActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme.Transparent.DarkActionBar" />
+            android:exported="true"
+            android:theme="@style/AppTheme.Transparent.DarkActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".ui.compose.DualWallpaperComposeActivity"
@@ -78,14 +84,8 @@
 
         <activity
             android:name=".ui.MainActivity"
-            android:exported="true"
-            android:theme="@style/AppTheme.Transparent.DarkActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:exported="false"
+            android:theme="@style/AppTheme.Transparent.DarkActionBar" />
 
         <activity
             android:name=".ui.PermissionActivity"

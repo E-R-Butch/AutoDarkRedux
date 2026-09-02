@@ -28,6 +28,7 @@ import me.ranko.autodark.Constant.SYSTEM_SECURE_PROP_DARK_MODE
 import me.ranko.autodark.R
 import me.ranko.autodark.Utils.DarkTimeUtil
 import me.ranko.autodark.Utils.ShellJobUtil
+import me.ranko.autodark.data.CityReference
 import me.ranko.autodark.data.LocationRepository
 import me.ranko.autodark.data.WallpaperRepository
 import me.ranko.autodark.domain.DarkModeScheduler
@@ -37,6 +38,7 @@ import me.ranko.autodark.ui.MainFragment.Companion.DARK_PREFERENCE_START
 import me.ranko.autodark.ui.Preference.DarkDisplayPreference
 import timber.log.Timber
 import java.time.LocalTime
+import java.time.ZoneId
 
 interface DarkPreferenceSupplier {
     fun get(@DarkPreferenceType type: String): DarkDisplayPreference
@@ -224,22 +226,63 @@ class DarkModeSettings private constructor(private val context: Application) :
             return true
         }
 
-        val location = locationRepository.getLastLocation()
-        if (location != null) {
-            val darkTimeStr = DarkTimeUtil.getDarkTimeString(location)
-            Timber.i("Sunrise at ${darkTimeStr.first}, sunset at ${darkTimeStr.second}")
-            // save dark time for master switch
-            saveAutoTime(darkTimeStr)
-            saveAutoMode(true)
-
-            isAutoMode = true
-            val darkTime = DarkTimeUtil.getDarkTime(darkTimeStr)
-            setAllAlarm(darkTime.second, darkTime.first)
-            return true
+        if (!calculateAndScheduleAutomaticTimes()) {
+            Timber.i("Location is unavailable")
+            return false
         }
 
-        Timber.i("Location is unavailable")
+        saveAutoMode(true)
+        isAutoMode = true
+        return true
+    }
+
+    suspend fun searchCities(query: String): List<CityReference> =
+        locationRepository.searchCities(query)
+
+    fun getManualCity(): CityReference? = locationRepository.getManualCity()
+
+    /**
+     * Updates the explicit city override. When automatic mode is active, solar
+     * times and both alarms are refreshed immediately. A failed refresh restores
+     * the previous city so UI state and the active schedule cannot diverge.
+     */
+    suspend fun setManualCity(city: CityReference?): Boolean {
+        val previous = locationRepository.getManualCity()
+        locationRepository.setManualCity(city)
+        if (!isAutoMode || calculateAndScheduleAutomaticTimes()) return true
+
+        locationRepository.setManualCity(previous)
         return false
+    }
+
+    private suspend fun calculateAndScheduleAutomaticTimes(): Boolean {
+        val selectedCity = locationRepository.getManualCity()
+        val location = locationRepository.getLastLocation() ?: return false
+        val sourceZone = selectedCity?.let { city ->
+            runCatching { ZoneId.of(city.timeZoneId) }.getOrElse { error ->
+                Timber.w(error, "Invalid city time zone: ${city.timeZoneId}")
+                return false
+            }
+        } ?: ZoneId.systemDefault()
+        val darkTimeStr = DarkTimeUtil.getDarkTimeString(
+            location = location,
+            sourceZone = sourceZone,
+            destinationZone = ZoneId.systemDefault()
+        ) ?: run {
+            Timber.w(
+                "No sunrise or sunset available for provider=${location.provider}, " +
+                    "sourceZone=$sourceZone"
+            )
+            return false
+        }
+        Timber.i(
+            "Calculated sunrise=${darkTimeStr.first}, sunset=${darkTimeStr.second}, " +
+                "sourceZone=$sourceZone"
+        )
+        saveAutoTime(darkTimeStr)
+        val darkTime = DarkTimeUtil.getDarkTime(darkTimeStr)
+        setAllAlarm(darkTime.second, darkTime.first)
+        return true
     }
 
     /**

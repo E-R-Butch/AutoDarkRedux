@@ -1,0 +1,2 @@
+# Fixed-width TSV keeps an empty ninth aliases column as a trailing tab.
+app/src/main/res/raw/cities_compact.tsv whitespace=-trailing-space

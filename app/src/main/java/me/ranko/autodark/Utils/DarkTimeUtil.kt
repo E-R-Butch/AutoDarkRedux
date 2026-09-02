@@ -110,19 +110,64 @@ object DarkTimeUtil {
      * @see     SunriseSunsetCalculator.getOfficialSunriseForDate
      * @see     SunriseSunsetCalculator.getOfficialSunsetForDate
      * */
-    fun getDarkTimeString(location: Location): Pair<String, String> {
-        val calendar = Calendar.getInstance()
-        val calculator = SunriseSunsetCalculator(
-            com.luckycatlabs.sunrisesunset.dto.Location(
-                location.latitude,
-                location.longitude
-            ), calendar.timeZone
-        )
-        val sunrise = calculator.getOfficialSunriseForDate(calendar)
-        val sunset = calculator.getOfficialSunsetForDate(calendar)
+    fun getDarkTimeString(
+        location: Location,
+        sourceZone: ZoneId = ZoneId.systemDefault(),
+        destinationZone: ZoneId = ZoneId.systemDefault()
+    ): Pair<String, String>? = getDarkTimeStringForDate(
+        latitude = location.latitude,
+        longitude = location.longitude,
+        sourceDate = LocalDate.now(sourceZone),
+        sourceZone = sourceZone,
+        destinationZone = destinationZone
+    )
 
-        return Pair(sunrise, sunset)
+    internal fun getDarkTimeStringForDate(
+        latitude: Double,
+        longitude: Double,
+        sourceDate: LocalDate,
+        sourceZone: ZoneId,
+        destinationZone: ZoneId
+    ): Pair<String, String>? {
+        val sourceTimeZone = TimeZone.getTimeZone(sourceZone)
+        val calendar = GregorianCalendar.from(sourceDate.atStartOfDay(sourceZone))
+        val calculator = SunriseSunsetCalculator(
+            com.luckycatlabs.sunrisesunset.dto.Location(latitude, longitude),
+            sourceTimeZone
+        )
+        val sunrise = parseSolarEventTime(calculator.getOfficialSunriseForDate(calendar))
+            ?: return null
+        val sunset = parseSolarEventTime(calculator.getOfficialSunsetForDate(calendar))
+            ?: return null
+
+        return Pair(
+            getPersistFormattedString(
+                convertLocalTimeBetweenZones(sourceDate, sunrise, sourceZone, destinationZone)
+            ),
+            getPersistFormattedString(
+                convertLocalTimeBetweenZones(sourceDate, sunset, sourceZone, destinationZone)
+            )
+        )
     }
+
+    private fun parseSolarEventTime(time: String?): LocalTime? {
+        if (time.isNullOrBlank()) return null
+        return try {
+            getPersistLocalTime(time)
+        } catch (_: java.time.format.DateTimeParseException) {
+            null
+        }
+    }
+
+    fun convertLocalTimeBetweenZones(
+        date: LocalDate,
+        time: LocalTime,
+        sourceZone: ZoneId,
+        destinationZone: ZoneId
+    ): LocalTime = LocalDateTime.of(date, time)
+        .atZone(sourceZone)
+        .withZoneSameInstant(destinationZone)
+        .toLocalTime()
 
     /**
      * Use [SunriseSunsetCalculator] to calculate dark mode time
@@ -132,8 +177,8 @@ object DarkTimeUtil {
      * @see     SunriseSunsetCalculator.getOfficialSunriseForDate
      * @see     SunriseSunsetCalculator.getOfficialSunsetForDate
      * */
-    fun getDarkTime(location: Location): Pair<LocalTime, LocalTime> {
-        val darkString = getDarkTimeString(location)
+    fun getDarkTime(location: Location): Pair<LocalTime, LocalTime>? {
+        val darkString = getDarkTimeString(location) ?: return null
         return Pair(getPersistLocalTime(darkString.first), getPersistLocalTime(darkString.second))
     }
 

@@ -63,6 +63,9 @@ object ShizukuApi {
         }
 
         try {
+            if (!Shizuku.pingBinder()) {
+                return ShizukuStatus.DEAD
+            }
             val permission = if (isPre11().not()) {
                 Shizuku.checkSelfPermission()
             } else {

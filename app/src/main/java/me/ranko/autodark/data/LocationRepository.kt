@@ -6,34 +6,64 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.location.LocationRequest
-import android.os.Build
-import android.os.CancellationSignal
+import android.os.Bundle
 import android.os.Looper
-import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.firstOrNull
-import java.util.function.Consumer
 import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
+
+/** Explicit legacy callbacks keep requestLocationUpdates safe on API 29. */
+internal class CompatLocationListener(
+    private val onLocation: (Location) -> Unit
+) : LocationListener {
+    override fun onLocationChanged(location: Location) = onLocation(location)
+
+    @Deprecated("Deprecated by Android")
+    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) = Unit
+
+    override fun onProviderEnabled(provider: String) = Unit
+
+    override fun onProviderDisabled(provider: String) = Unit
+}
 
 /**
  * Provides a usable device location for sunrise/sunset calculation.
  *
- * The repository owns permission and provider checks so callers do not need
- * to invoke a permission-annotated framework API directly.
+ * The repository owns permission, provider, private-cache, and China-only
+ * keyless fallback checks so callers receive one bounded result.
  */
 class LocationRepository(context: Context) {
     private companion object {
-        private const val LOCATION_TIMEOUT_MILLIS = 30_000L
-        private const val LOCATION_UPDATE_INTERVAL_MILLIS = 1_000L
+        // Match the last known working implementation: keep regular provider
+        // updates active for at most three seconds before reading the cache again.
+        private const val LOCATION_TIMEOUT_MILLIS = 3_000L
+        private const val LOCATION_UPDATE_INTERVAL_MILLIS = 50L
+        private const val LOCATION_CACHE_PREFERENCES = "location_cache"
+        private const val CACHE_LATITUDE = "latitude"
+        private const val CACHE_LONGITUDE = "longitude"
+        private const val CACHE_ACCURACY = "accuracy"
+        private const val CACHE_TIME = "time"
+        private const val CACHE_SOURCE = "source"
+        private const val MANUAL_CITY_ID = "manual_city_id"
+        private const val MANUAL_CITY_NAME = "manual_city_name"
+        private const val MANUAL_CITY_COUNTRY = "manual_city_country"
+        private const val MANUAL_CITY_LATITUDE = "manual_city_latitude"
+        private const val MANUAL_CITY_LONGITUDE = "manual_city_longitude"
+        private const val MANUAL_CITY_TIME_ZONE = "manual_city_time_zone"
     }
 
     private val appContext = context.applicationContext
     private val locationManager = appContext.getSystemService(LocationManager::class.java)
+    private val cache = appContext.getSharedPreferences(
+        LOCATION_CACHE_PREFERENCES,
+        Context.MODE_PRIVATE
+    )
+    private val timeZoneFallback = TimeZoneLocationFallback(appContext)
+    private val cityCatalog = CityCatalog(appContext)
 
     fun hasLocationPermission(): Boolean {
         val fine = ContextCompat.checkSelfPermission(
@@ -52,163 +82,252 @@ class LocationRepository(context: Context) {
         return manager.isLocationEnabled && manager.getProviders(true).isNotEmpty()
     }
 
+    suspend fun searchCities(query: String): List<CityReference> = cityCatalog.search(query)
+
+    fun getManualCity(): CityReference? {
+        val id = cache.getString(MANUAL_CITY_ID, null) ?: return null
+        val name = cache.getString(MANUAL_CITY_NAME, null) ?: return null
+        val country = cache.getString(MANUAL_CITY_COUNTRY, null) ?: return null
+        val timeZone = cache.getString(MANUAL_CITY_TIME_ZONE, null) ?: return null
+        if (!cache.contains(MANUAL_CITY_LATITUDE) || !cache.contains(MANUAL_CITY_LONGITUDE)) {
+            return null
+        }
+        val latitude = Double.fromBits(cache.getLong(MANUAL_CITY_LATITUDE, Long.MIN_VALUE))
+        val longitude = Double.fromBits(cache.getLong(MANUAL_CITY_LONGITUDE, Long.MIN_VALUE))
+        if (!latitude.isFinite() || latitude !in -90.0..90.0) return null
+        if (!longitude.isFinite() || longitude !in -180.0..180.0) return null
+        return CityReference(
+            id = id,
+            name = name,
+            countryCode = country,
+            latitude = latitude,
+            longitude = longitude,
+            timeZoneId = timeZone
+        )
+    }
+
+    fun setManualCity(city: CityReference?) {
+        val editor = cache.edit()
+        if (city == null) {
+            editor
+                .remove(MANUAL_CITY_ID)
+                .remove(MANUAL_CITY_NAME)
+                .remove(MANUAL_CITY_COUNTRY)
+                .remove(MANUAL_CITY_LATITUDE)
+                .remove(MANUAL_CITY_LONGITUDE)
+                .remove(MANUAL_CITY_TIME_ZONE)
+                .apply()
+            return
+        }
+        editor
+            .putString(MANUAL_CITY_ID, city.id)
+            .putString(MANUAL_CITY_NAME, city.name)
+            .putString(MANUAL_CITY_COUNTRY, city.countryCode)
+            .putLong(MANUAL_CITY_LATITUDE, city.latitude.toBits())
+            .putLong(MANUAL_CITY_LONGITUDE, city.longitude.toBits())
+            .putString(MANUAL_CITY_TIME_ZONE, city.timeZoneId)
+            .apply()
+    }
+
     /**
-     * Returns the newest cached location, or waits for a fresh location when
-     * the system has no cached result yet.
-     *
-     * A device can have location permission and enabled providers while still
-     * having no last-known location. In that case, registering a request and
-     * immediately removing it makes auto mode fail deterministically. This
-     * method keeps the request alive until the first callback or the bounded
-     * timeout, and always removes the listener when collection ends.
+     * Returns a location using a deterministic resolution policy. Manual city is
+     * always authoritative. Framework providers are tried only when usable;
+     * private cache and the coarse bundled time-zone reference remain reachable
+     * when permission or providers are unavailable.
      */
     suspend fun getLastLocation(): Location? {
-        if (!hasLocationPermission()) {
-            Timber.i("Location unavailable: permission not granted")
-            return null
+        getManualCity()?.let { city ->
+            Timber.i("Using manually selected city")
+            return city.toLocation("manual_city")
         }
 
-        val manager = locationManager ?: run {
-            Timber.i("Location unavailable: LocationManager is null")
-            return null
-        }
-
-        val enabledProviders = try {
-            manager.getProviders(true)
-        } catch (e: SecurityException) {
-            Timber.i(e, "Location unavailable: cannot enumerate providers")
-            return null
-        }
-
-        val cached = readLastKnownLocations(manager, enabledProviders)
-        if (cached != null) {
-            Timber.i(
-                "Using cached location from ${cached.provider ?: "unknown"} " +
-                    "(time=${cached.time})"
-            )
-            return cached
-        }
-
-        val requestProviders = enabledProviders
-            .asSequence()
-            .filterNot { it == LocationManager.PASSIVE_PROVIDER }
-            .distinct()
-            .toList()
-        if (requestProviders.isEmpty()) {
-            Timber.i("Location unavailable: no active providers are enabled")
-            return null
-        }
-
-        Timber.i(
-            "No cached location; waiting up to ${LOCATION_TIMEOUT_MILLIS}ms " +
-                "for providers $requestProviders"
-        )
-        val fresh = withTimeoutOrNull(LOCATION_TIMEOUT_MILLIS) {
-            locationUpdates(manager, requestProviders).firstOrNull()
-        }
-
-        if (fresh == null) {
-            Timber.i("Location unavailable: timed out waiting for a location callback")
+        val manager = locationManager
+        val hasPermission = hasLocationPermission()
+        val locationEnabled = manager?.isLocationEnabled == true
+        val enabledProviders = if (manager != null && hasPermission && locationEnabled) {
+            try {
+                manager.getProviders(true)
+            } catch (e: SecurityException) {
+                Timber.i(e, "Cannot enumerate location providers")
+                emptyList()
+            }
         } else {
-            Timber.i(
-                "Received fresh location from ${fresh.provider ?: "unknown"} " +
-                    "(time=${fresh.time})"
-            )
+            emptyList()
         }
-        return fresh
+        val plan = LocationResolutionPolicy.plan(
+            LocationRuntimeState(
+                hasPermission = hasPermission,
+                managerAvailable = manager != null,
+                locationEnabled = locationEnabled,
+                hasEnabledProviders = enabledProviders.isNotEmpty()
+            )
+        )
+
+        if (!hasPermission) Timber.i("Framework location skipped: permission not granted")
+        if (manager == null) Timber.i("Framework location skipped: LocationManager is null")
+        if (manager != null && !locationEnabled) Timber.i("Framework location skipped: system location is disabled")
+        if (manager != null && hasPermission && locationEnabled && enabledProviders.isEmpty()) {
+            Timber.i("Framework location skipped: no enabled providers")
+        }
+
+        for (step in plan) {
+            when (step) {
+                LocationLookupStep.PLATFORM_CACHE -> {
+                    val platformManager = manager ?: continue
+                    readBestLastKnownLocation(
+                        platformManager,
+                        enabledProviders,
+                        System.currentTimeMillis()
+                    )?.let { systemCached ->
+                        Timber.i(
+                            "Using Android cached location from ${systemCached.provider ?: "unknown"} " +
+                                "(time=${systemCached.time}, accuracy=${systemCached.accuracy})"
+                        )
+                        persistPlatformLocation(systemCached)
+                        return systemCached
+                    }
+                }
+
+                LocationLookupStep.PRIVATE_CACHE -> {
+                    readPrivateCache()?.let { appCached ->
+                        Timber.i("Using recent private platform-location cache")
+                        return appCached
+                    }
+                }
+
+                LocationLookupStep.PLATFORM_UPDATE -> {
+                    val platformManager = manager ?: continue
+                    Timber.i(
+                        "No cached location; requesting regular updates for up to " +
+                            "${LOCATION_TIMEOUT_MILLIS}ms from $enabledProviders"
+                    )
+                    val callbackLocation = withTimeoutOrNull(LOCATION_TIMEOUT_MILLIS) {
+                        locationUpdates(platformManager, enabledProviders).firstOrNull { location ->
+                            PlatformLocationPolicy.isUsable(
+                                location.time,
+                                System.currentTimeMillis()
+                            )
+                        }
+                    }
+                    val platformLocation = callbackLocation
+                        ?: readBestLastKnownLocation(
+                            platformManager,
+                            enabledProviders,
+                            System.currentTimeMillis()
+                        )
+                    if (platformLocation != null) {
+                        Timber.i(
+                            "Received Android location from ${platformLocation.provider ?: "unknown"} " +
+                                "(time=${platformLocation.time}, accuracy=${platformLocation.accuracy})"
+                        )
+                        persistPlatformLocation(platformLocation)
+                        return platformLocation
+                    }
+                }
+
+                LocationLookupStep.TIME_ZONE_REFERENCE -> {
+                    val zoneId = java.util.TimeZone.getDefault().id
+                    Timber.i("Using coarse bundled time-zone reference for $zoneId")
+                    val fallbackLocation = timeZoneFallback.locate(zoneId)
+                    if (fallbackLocation == null) {
+                        Timber.i("Location unavailable: no bundled reference for time zone $zoneId")
+                        return null
+                    }
+                    return fallbackLocation
+                }
+            }
+        }
+        return null
+    }
+
+    private fun readPrivateCache(): Location? {
+        if (!cache.contains(CACHE_LATITUDE) || !cache.contains(CACHE_LONGITUDE)) return null
+
+        val savedAt = cache.getLong(CACHE_TIME, 0L)
+        val source = cache.getString(CACHE_SOURCE, null)
+        if (!PrivateLocationCachePolicy.isUsable(source, savedAt, System.currentTimeMillis())) {
+            clearPrivateLocationCache()
+            return null
+        }
+
+        val latitude = Double.fromBits(cache.getLong(CACHE_LATITUDE, Long.MIN_VALUE))
+        val longitude = Double.fromBits(cache.getLong(CACHE_LONGITUDE, Long.MIN_VALUE))
+        if (!latitude.isFinite() || latitude !in -90.0..90.0) {
+            clearPrivateLocationCache()
+            return null
+        }
+        if (!longitude.isFinite() || longitude !in -180.0..180.0) {
+            clearPrivateLocationCache()
+            return null
+        }
+
+        return Location("private_cache").apply {
+            this.latitude = latitude
+            this.longitude = longitude
+            accuracy = cache.getFloat(CACHE_ACCURACY, 50_000f)
+            time = savedAt
+        }
+    }
+
+    private fun persistPlatformLocation(location: Location) {
+        val latitude = location.latitude
+        val longitude = location.longitude
+        if (!PlatformLocationPolicy.isUsable(location.time, System.currentTimeMillis())) return
+        if (!latitude.isFinite() || latitude !in -90.0..90.0) return
+        if (!longitude.isFinite() || longitude !in -180.0..180.0) return
+
+        cache.edit()
+            .putLong(CACHE_LATITUDE, latitude.toBits())
+            .putLong(CACHE_LONGITUDE, longitude.toBits())
+            .putFloat(CACHE_ACCURACY, location.accuracy.coerceAtLeast(0f))
+            .putLong(CACHE_TIME, location.time)
+            .putString(CACHE_SOURCE, PrivateLocationCachePolicy.SOURCE_PLATFORM)
+            .apply()
+    }
+
+    private fun clearPrivateLocationCache() {
+        cache.edit()
+            .remove(CACHE_LATITUDE)
+            .remove(CACHE_LONGITUDE)
+            .remove(CACHE_ACCURACY)
+            .remove(CACHE_TIME)
+            .remove(CACHE_SOURCE)
+            .apply()
     }
 
     @SuppressLint("MissingPermission")
-    private fun readLastKnownLocations(
+    private fun readBestLastKnownLocation(
         manager: LocationManager,
-        providers: List<String>
+        providers: List<String>,
+        now: Long
     ): Location? {
-        var latest: Location? = null
+        val candidates = mutableListOf<Location>()
         for (provider in providers) {
             try {
-                val candidate = manager.getLastKnownLocation(provider)
-                if (candidate != null && candidate.time > (latest?.time ?: Long.MIN_VALUE)) {
-                    latest = candidate
+                manager.getLastKnownLocation(provider)?.let { candidate ->
+                    candidates += candidate
                 }
             } catch (_: SecurityException) {
-                // A provider may require a permission that was revoked between
-                // the initial check and this query.
+                // Permission can be revoked between the initial check and read.
             } catch (_: IllegalArgumentException) {
-                // The provider may disappear while the query is running.
+                // A provider can disappear between enumeration and read.
             }
         }
-        return latest
+        return PlatformLocationPolicy.selectBest(
+            candidates = candidates,
+            now = now,
+            timestampOf = Location::getTime,
+            accuracyOf = Location::getAccuracy
+        )
     }
 
     @SuppressLint("MissingPermission")
     private fun locationUpdates(
         manager: LocationManager,
         providers: List<String>
-    ): Flow<Location> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        currentLocationUpdates(manager, providers)
-    } else {
-        legacyLocationUpdates(manager, providers)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.R)
-    @SuppressLint("MissingPermission")
-    private fun currentLocationUpdates(
-        manager: LocationManager,
-        providers: List<String>
-    ) = callbackFlow<Location> {
-        val executor = ContextCompat.getMainExecutor(appContext)
-        val cancellationSignals = mutableListOf<CancellationSignal>()
-        var registered = false
-
-        for (provider in providers) {
-            val signal = CancellationSignal()
-            cancellationSignals += signal
-            try {
-                val callback = Consumer<Location?> { location ->
-                    if (location == null) {
-                        Timber.d("Current location returned null for provider=$provider")
-                    } else {
-                        trySend(location)
-                    }
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    val request = LocationRequest.Builder(LOCATION_UPDATE_INTERVAL_MILLIS)
-                        .setQuality(LocationRequest.QUALITY_HIGH_ACCURACY)
-                        .setDurationMillis(LOCATION_TIMEOUT_MILLIS)
-                        .setMaxUpdates(1)
-                        .build()
-                    manager.getCurrentLocation(provider, request, signal, executor, callback)
-                } else {
-                    manager.getCurrentLocation(provider, signal, executor, callback)
-                }
-                registered = true
-                Timber.d("Requested current location for provider=$provider")
-            } catch (e: SecurityException) {
-                Timber.w(e, "Cannot request current location for provider=$provider")
-            } catch (e: IllegalArgumentException) {
-                Timber.w(e, "Provider disappeared while requesting current location: $provider")
-            }
-        }
-
-        if (!registered) {
-            close()
-        }
-
-        awaitClose {
-            cancellationSignals.forEach { it.cancel() }
-            Timber.d("Cancelled current location requests")
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun legacyLocationUpdates(
-        manager: LocationManager,
-        providers: List<String>
-    ) = callbackFlow<Location> {
-        val listener = object : LocationListener {
-            override fun onLocationChanged(location: Location) {
-                trySend(location)
-            }
+    ): Flow<Location> = callbackFlow {
+        val listener = CompatLocationListener { location ->
+            trySend(location)
         }
 
         var registered = false
@@ -222,7 +341,7 @@ class LocationRepository(context: Context) {
                     Looper.getMainLooper()
                 )
                 registered = true
-                Timber.d("Registered location updates for provider=$provider")
+                Timber.d("Registered regular location updates for provider=$provider")
             } catch (e: SecurityException) {
                 Timber.w(e, "Cannot request location updates for provider=$provider")
             } catch (e: IllegalArgumentException) {
@@ -237,7 +356,7 @@ class LocationRepository(context: Context) {
         awaitClose {
             try {
                 manager.removeUpdates(listener)
-                Timber.d("Removed location update listener")
+                Timber.d("Removed regular location update listener")
             } catch (e: SecurityException) {
                 Timber.w(e, "Cannot remove location update listener")
             }
