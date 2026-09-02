@@ -1,118 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/permissionRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="?attr/actionBarSize">
 
-    <data>
+    <RelativeLayout
+        style="@style/CardStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <variable
-            name="viewModel"
-            type="me.ranko.autodark.ui.PermissionViewModel" />
-    </data>
+        <me.ranko.autodark.ui.widget.MaterialCircleIconView
+            android:id="@+id/icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_attention" />
 
-    <LinearLayout android:id="@+id/permissionRoot"
+        <TextView
+            android:id="@+id/title"
+            style="@style/CardTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_toEndOf="@id/icon"
+            android:text="@string/permission_title" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title"
+            android:layout_alignStart="@id/title"
+            android:layout_alignParentEnd="true"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/permission_description"
+            android:textColor="?android:textColorSecondary" />
+    </RelativeLayout>
+
+    <ViewStub
+        android:id="@+id/stubShizukuFirst"
+        style="@style/CardStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingTop="?attr/actionBarSize">
+        android:layout="@layout/content_permission_shizuku_card" />
 
-        <RelativeLayout
-            style="@style/CardStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+    <me.ranko.autodark.ui.widget.PermissionLayout
+        android:id="@+id/adb"
+        style="@style/CardStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:description="@string/adb_description"
+        app:expandDescription="true"
+        app:iconColor="teal"
+        app:srcIcon="@drawable/ic_adb"
+        app:title="@string/adb_title">
 
-            <me.ranko.autodark.ui.widget.MaterialCircleIconView
-                android:id="@+id/icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/ic_attention" />
+        <TextView
+            android:id="@+id/btnAdb"
+            style="@style/CardButton"
+            app:drawableStartCompat="@drawable/ic_restart"
+            android:text="@string/adb_check"
+            android:visibility="visible" />
 
-            <TextView android:id="@+id/title"
-                style="@style/CardTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_toEndOf="@id/icon"
-                android:text="@string/permission_title" />
+        <ProgressBar
+            android:id="@+id/progressAdb"
+            style="@style/CardProgress"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/title"
-                android:layout_alignStart="@id/title"
-                android:layout_alignParentEnd="true"
-                android:fontFamily="sans-serif-medium"
-                android:text="@string/permission_description"
-                android:textColor="?android:textColorSecondary" />
-        </RelativeLayout>
+        <TextView
+            android:id="@+id/btnSend"
+            style="@style/CardButton"
+            android:clickable="true"
+            app:drawableStartCompat="@drawable/ic_send"
+            android:text="@string/adb_send" />
+    </me.ranko.autodark.ui.widget.PermissionLayout>
 
-        <ViewStub android:id="@+id/stubShizukuFirst"
-            style="@style/CardStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout="@layout/content_permission_shizuku_card" />
+    <me.ranko.autodark.ui.widget.PermissionLayout
+        android:id="@+id/root"
+        style="@style/CardStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:description="@string/root_description"
+        app:expandDescription="true"
+        app:iconColor="red"
+        app:srcIcon="@drawable/ic_root"
+        app:title="@string/root_title">
 
-        <me.ranko.autodark.ui.widget.PermissionLayout
-            android:id="@+id/adb"
-            style="@style/CardStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:description="@string/adb_description"
-            app:expandDescription="true"
-            app:iconColor="teal"
-            app:srcIcon="@drawable/ic_adb"
-            app:title="@string/adb_title">
+        <TextView
+            android:id="@+id/btnRoot"
+            style="@style/CardButton"
+            app:drawableStartCompat="@drawable/ic_grant"
+            android:text="@string/root_grant"
+            android:visibility="visible" />
 
-            <TextView
-                style="@style/CardButton"
-                android:drawableStart="@drawable/ic_restart"
-                android:onClick="@{() -> viewModel.onAdbCheck()}"
-                android:text="@string/adb_check"
-                app:hideOnLoading="@{viewModel.adbJobStatus}"/>
+        <ProgressBar
+            android:id="@+id/progressRoot"
+            style="@style/CardProgress"
+            android:visibility="gone"
+            tools:visibility="visible" />
+    </me.ranko.autodark.ui.widget.PermissionLayout>
 
-            <ProgressBar android:id="@+id/progressAdb"
-                style="@style/CardProgress"
-                app:showOnLoading="@{viewModel.adbJobStatus}"
-                tools:visibility="visible" />
-
-            <TextView android:id="@+id/btnSend"
-                style="@style/CardButton"
-                android:clickable="true"
-                android:drawableStart="@drawable/ic_send"
-                android:onClick="@{viewModel.shareAdbCommand}"
-                android:text="@string/adb_send" />
-        </me.ranko.autodark.ui.widget.PermissionLayout>
-
-        <me.ranko.autodark.ui.widget.PermissionLayout
-            android:id="@+id/root"
-            style="@style/CardStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:description="@string/root_description"
-            app:expandDescription="true"
-            app:iconColor="red"
-            app:srcIcon="@drawable/ic_root"
-            app:title="@string/root_title">
-
-            <TextView android:id="@+id/btnRoot"
-                style="@style/CardButton"
-                android:drawableStart="@drawable/ic_grant"
-                android:onClick="@{() -> viewModel.grantWithRoot()}"
-                android:text="@string/root_grant"
-                app:hideOnLoading="@{viewModel.sudoJobStatus}" />
-
-            <ProgressBar android:id="@+id/progressRoot"
-                style="@style/CardProgress"
-                app:showOnLoading="@{viewModel.sudoJobStatus}"
-                tools:visibility="visible" />
-        </me.ranko.autodark.ui.widget.PermissionLayout>
-
-        <ViewStub android:id="@+id/stubShizukuLast"
-            style="@style/CardStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout="@layout/content_permission_shizuku_card" />
-    </LinearLayout>
-</layout>
+    <ViewStub
+        android:id="@+id/stubShizukuLast"
+        style="@style/CardStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout="@layout/content_permission_shizuku_card" />
+</LinearLayout>

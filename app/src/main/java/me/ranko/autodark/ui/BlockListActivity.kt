@@ -6,14 +6,13 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.Window
+import androidx.activity.OnBackPressedCallback
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.Observable
-import androidx.databinding.ObservableField
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -58,22 +57,14 @@ class BlockListActivity : BaseListActivity() {
         }
     }
 
-    private val mMessageObserver by lazy(LazyThreadSafetyMode.NONE) {
-        object : Observable.OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: Observable, propertyId: Int) {
-                val message = (sender as ObservableField<*>).get() ?: return
-                showMessage((message as Summary).message)
-            }
-        }
+    private val mMessageObserver = Observer<Summary?> { message ->
+        message?.let { showMessage(it.message) }
     }
 
-    private val mDialogObserver by lazy(LazyThreadSafetyMode.NONE) {
-        object : Observable.OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: Observable, propertyId: Int) {
-                val dialog = (sender as ObservableField<*>).get() ?: return
-                (dialog as DialogFragment).show(supportFragmentManager, TAG_CURRENT_FRAGMENT)
-                viewModel.dialog.set(null)
-            }
+    private val mDialogObserver = Observer<DialogFragment?> { dialog ->
+        dialog?.let {
+            it.show(supportFragmentManager, TAG_CURRENT_FRAGMENT)
+            viewModel.consumeDialog()
         }
     }
 
@@ -85,10 +76,23 @@ class BlockListActivity : BaseListActivity() {
 
         viewModel = ViewModelProvider(this, BlockListViewModel.Companion.Factory(application))
             .get(BlockListViewModel::class.java)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_block_list)
-        binding.lifecycleOwner = this
-        binding.viewModel = viewModel
+        binding = ActivityBlockListBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         super.onCreate(savedInstanceState)
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                when {
+                    viewModel.isUploading() -> showMessage(getString(R.string.app_upload_busy))
+                    binding.toolbarEdit.hasFocus() -> binding.toolbar.clearFocus()
+                    viewModel.isEditing() -> viewModel.onEditMode()
+                    else -> {
+                        isEnabled = false
+                        onBackPressedDispatcher.onBackPressed()
+                        isEnabled = true
+                    }
+                }
+            }
+        })
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -120,7 +124,7 @@ class BlockListActivity : BaseListActivity() {
             setMenuVisible(isRefreshing.not() && viewModel.isEditing().not())
         })
 
-        viewModel.dialog.addOnPropertyChangedCallback(mDialogObserver)
+        viewModel.dialog.observe(this, mDialogObserver)
 
         viewModel.attachSearchHelper(this, binding.toolbarEdit)
         viewModel.isSearching.observe(this, { searching ->
@@ -147,7 +151,12 @@ class BlockListActivity : BaseListActivity() {
         })
 
         // hide all the stuff when update failed
-        viewModel.uploadStatus.observe(this, { status ->
+        viewModel.uploadStatus.observe(this) { status ->
+            val loadingOrFailed = status == LoadStatus.START || status == LoadStatus.FAILED
+            binding.progressRoot.visibility = if (loadingOrFailed) View.VISIBLE else View.INVISIBLE
+            binding.progressBar.visibility = if (status == LoadStatus.FAILED) View.GONE else View.VISIBLE
+            binding.errorImg.visibility = if (status == LoadStatus.FAILED) View.VISIBLE else View.GONE
+            binding.swipeRefresh.visibility = if (loadingOrFailed) View.INVISIBLE else View.VISIBLE
             if (status == LoadStatus.SUCCEED) {
                 binding.fab.show()
                 setMenuVisible(true)
@@ -155,29 +164,17 @@ class BlockListActivity : BaseListActivity() {
                 binding.fab.hide()
                 setMenuVisible(false)
             }
-        })
-
-        viewModel.message.addOnPropertyChangedCallback(mMessageObserver)
-        if (savedInstanceState != null) {
-            val message = viewModel.message.get()?: return
-            showMessage(message.message)
         }
+
+        viewModel.updateMessage.observe(this) { message ->
+            binding.progressText.text = message.orEmpty()
+        }
+        viewModel.message.observe(this, mMessageObserver)
     }
 
     private fun showMessage(message: String, @Duration duration: Int = Snackbar.LENGTH_SHORT) {
         Snackbar.make(binding.coordinatorRoot, message, duration).show()
-        viewModel.message.set(null)
-    }
-
-    override fun onBackPressed() = when {
-        // prevent exit while uploading
-        viewModel.isUploading() -> showMessage(getString(R.string.app_upload_busy))
-
-        binding.toolbarEdit.hasFocus() -> binding.toolbar.clearFocus()
-
-        viewModel.isEditing() -> viewModel.onEditMode()
-
-        else -> super.onBackPressed()
+        viewModel.consumeMessage()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -211,7 +208,7 @@ class BlockListActivity : BaseListActivity() {
 
             R.id.action_hook_ime -> viewModel.onHookImeSelected(item)
 
-            android.R.id.home -> onBackPressed()
+            android.R.id.home -> onBackPressedDispatcher.onBackPressed()
 
             else -> return super.onOptionsItemSelected(item)
         }
@@ -256,8 +253,6 @@ class BlockListActivity : BaseListActivity() {
     override fun onDestroy() {
         binding.recyclerView.removeOnScrollListener(mScrollListener)
         binding.recyclerView.adapter = null
-        viewModel.dialog.removeOnPropertyChangedCallback(mDialogObserver)
-        viewModel.message.removeOnPropertyChangedCallback(mMessageObserver)
         super.onDestroy()
     }
 }

@@ -4,59 +4,56 @@ import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.view.animation.AnimationUtils
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AlertDialog
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import me.ranko.autodark.AutoDarkApplication
 import me.ranko.autodark.R
 import me.ranko.autodark.Utils.CircularAnimationUtil
+import me.ranko.autodark.core.LoadStatus
 import me.ranko.autodark.core.ShizukuApi
 import me.ranko.autodark.core.ShizukuStatus
 import me.ranko.autodark.databinding.ActivityPermissionBinding
-import me.ranko.autodark.ui.widget.PermissionLayout
+import me.ranko.autodark.databinding.ContentPermissionShizukuCardBinding
 
 /**
  * Activity that shows an instruction for granting [Manifest.permission.WRITE_SECURE_SETTINGS].
- * */
+ */
 class PermissionActivity : BaseListActivity(), ViewTreeObserver.OnGlobalLayoutListener {
     private lateinit var binding: ActivityPermissionBinding
+    private var shizukuBinding: ContentPermissionShizukuCardBinding? = null
 
-    /**
-     * Coordinates that circle animate starts
-     * **Nullable** if Activity started without Animation
-     *
-     * @see     PermissionActivity.startWithAnimationForResult
-     * */
+    /** Coordinates that circle animation starts from. */
     private var coordinate: IntArray? = null
 
     private var shizukuDialog: AlertDialog? = null
 
     private val viewModel: PermissionViewModel by lazy(LazyThreadSafetyMode.NONE) {
-        ViewModelProvider(this, PermissionViewModel.Companion.Factory(application)).get(
+        ViewModelProvider(this, PermissionViewModel.Companion.Factory(application))[
             PermissionViewModel::class.java
-        )
+        ]
     }
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         coordinate = intent.getIntArrayExtra(ARG_COORDINATE)
-        if ( coordinate != null) {
-            // replace default transition
+        if (coordinate != null) {
             overridePendingTransition(R.anim.do_not_move, R.anim.do_not_move)
         }
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_permission)
-        binding.lifecycleOwner = this
-        binding.viewModel = viewModel
+        binding = ActivityPermissionBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         lifecycle.addObserver(viewModel)
         super.onCreate(savedInstanceState)
         viewModel.registerPermissionPre11(this)
 
         initShizukuCard()
+        observePermissionState()
 
         viewModel.permissionResult.observe(this) { result ->
             if (result) {
@@ -76,26 +73,42 @@ class PermissionActivity : BaseListActivity(), ViewTreeObserver.OnGlobalLayoutLi
         }
     }
 
+    private fun observePermissionState() {
+        viewModel.sudoJobStatus.observe(this) { status ->
+            updateProgress(binding.content.btnRoot, binding.content.progressRoot, status)
+        }
+        viewModel.adbJobStatus.observe(this) { status ->
+            updateProgress(binding.content.btnAdb, binding.content.progressAdb, status)
+        }
+        viewModel.shizukuJobStatus.observe(this) { status ->
+            shizukuBinding?.let { updateProgress(it.btnShizuku, it.progressShizuku, status) }
+        }
+    }
+
+    private fun updateProgress(button: TextView, progress: ProgressBar, status: Int?) {
+        val running = status == LoadStatus.START
+        button.visibility = if (running) View.GONE else View.VISIBLE
+        progress.visibility = if (running) View.VISIBLE else View.GONE
+    }
+
     override fun getRootView(): View = binding.coordRoot
 
     override fun getListView(): View = binding.content.permissionRoot
 
     override fun getAppbar(): View = binding.appbarPermission
 
-    /**
-     * Called on grant with Shizuku button clicked
-     * */
-    fun onShizukuClick(@Suppress("UNUSED_PARAMETER")v: View?) {
-        when (viewModel.status.value as ShizukuStatus) {
-
+    /** Called when the Shizuku grant button is clicked. */
+    private fun onShizukuClick(@Suppress("UNUSED_PARAMETER") view: View?) {
+        when (viewModel.status.value ?: ShizukuStatus.DEAD) {
             ShizukuStatus.DEAD -> showShizukuDeadDialog()
-
             ShizukuStatus.NOT_INSTALL -> {
-                Snackbar.make(binding.coordRoot, R.string.shizuku_not_install, Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(
+                    binding.coordRoot,
+                    R.string.shizuku_not_install,
+                    Snackbar.LENGTH_SHORT
+                ).show()
             }
-
             ShizukuStatus.UNAUTHORIZED -> viewModel.requestPermission()
-
             ShizukuStatus.AVAILABLE -> viewModel.grantWithShizuku()
         }
     }
@@ -116,26 +129,32 @@ class PermissionActivity : BaseListActivity(), ViewTreeObserver.OnGlobalLayoutLi
     }
 
     private fun initShizukuCard() {
-        // Redux: Shizuku primary - always first, recommended
-        val viewStub = binding.content.stubShizukuFirst
-        with(viewStub.viewStub!!.inflate() as PermissionLayout) {
-            if (AutoDarkApplication.isSui) {
-                // Remove root permission when Sui is available
-                (binding.content.getRoot() as ViewGroup).removeView(binding.content.root)
-            }
+        val inflated = binding.content.stubShizukuFirst.inflate()
+        shizukuBinding = ContentPermissionShizukuCardBinding.bind(inflated)
+        val card = requireNotNull(shizukuBinding)
+        val isSui = AutoDarkApplication.isSui
+        card.root.setTitle(if (isSui) R.string.sui_title else R.string.shizuku_title)
+        card.root.iconColor = if (isSui) ShizukuApi.SUI_COLOR else ShizukuApi.SHIZUKU_COLOR
+        card.root.description = getString(R.string.shizuku_description, card.root.title)
+        card.btnShizuku.setOnClickListener(::onShizukuClick)
 
-            description = getString(R.string.shizuku_description, title)
-            val isInstalled = ShizukuApi.isShizukuInstalled(this@PermissionActivity)
-            if (isInstalled) {
-                val rotate = AnimationUtils.loadAnimation(context, R.anim.rotate_infinite)
-                titleIcon.startAnimation(rotate)
-            }
+        binding.content.btnAdb.setOnClickListener { viewModel.onAdbCheck() }
+        binding.content.btnRoot.setOnClickListener { viewModel.grantWithRoot() }
+        binding.content.btnSend.setOnClickListener(PermissionViewModel.shareAdbCommand)
+
+        if (AutoDarkApplication.isSui) {
+            // Remove the legacy root permission card when Sui is available.
+            binding.content.getRoot().removeView(binding.content.root)
         }
-        // Redux: Shizuku unified - hide ADB/Root fallback cards to keep UI clean (still available via code fallback)
-        try {
-            binding.content.adb.visibility = android.view.View.GONE
-            binding.content.root.visibility = android.view.View.GONE
-        } catch (_: Exception) {}
+
+        if (ShizukuApi.isShizukuInstalled(this)) {
+            val rotate = AnimationUtils.loadAnimation(this, R.anim.rotate_infinite)
+            card.root.titleIcon.startAnimation(rotate)
+        }
+
+        // Keep the unified Shizuku route as the primary UI. The fallback code remains available.
+        binding.content.adb.visibility = View.GONE
+        binding.content.root.visibility = View.GONE
     }
 
     private fun showRootView() {
@@ -143,20 +162,21 @@ class PermissionActivity : BaseListActivity(), ViewTreeObserver.OnGlobalLayoutLi
     }
 
     override fun onDestroy() {
+        shizukuBinding?.root?.titleIcon?.clearAnimation()
         shizukuDialog?.dismiss()
         super.onDestroy()
     }
 
     companion object {
-        private const val ARG_COORDINATE: String = "ARG_COORDINATE"
+        private const val ARG_COORDINATE = "ARG_COORDINATE"
 
-        /**
-         * Launch this activity for requesting permission from user
-         * */
-        fun startWithAnimationForResult(startView: View, launcher: ActivityResultLauncher<Intent>) {
+        /** Launch this activity for requesting permission from user. */
+        fun startWithAnimationForResult(
+            startView: View,
+            launcher: ActivityResultLauncher<Intent>
+        ) {
             val intent = Intent(startView.context, PermissionActivity::class.java)
-            val coordinate = CircularAnimationUtil.getViewCenterCoordinate(startView)
-            intent.putExtra(ARG_COORDINATE, coordinate)
+            intent.putExtra(ARG_COORDINATE, CircularAnimationUtil.getViewCenterCoordinate(startView))
             launcher.launch(intent)
         }
     }

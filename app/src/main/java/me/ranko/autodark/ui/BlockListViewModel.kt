@@ -18,7 +18,6 @@ import android.widget.EditText
 import androidx.annotation.StringRes
 import androidx.collection.ArraySet
 import androidx.core.content.ContextCompat
-import androidx.databinding.ObservableField
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.*
 import androidx.preference.PreferenceManager
@@ -145,7 +144,9 @@ class BlockListViewModel(application: Application) : AndroidViewModel(applicatio
     val uploadStatus: LiveData<Int>
         get() = _uploadStatus
 
-    val updateMessage =  ObservableField<String>()
+    private val _updateMessage = MutableLiveData<String>()
+    val updateMessage: LiveData<String>
+        get() = _updateMessage
 
     /**
      * Indicates a refreshing job is running, UI should show a loading progress
@@ -178,9 +179,13 @@ class BlockListViewModel(application: Application) : AndroidViewModel(applicatio
 
     private var mSearchHelper: SearchHelper? = null
 
-    val dialog = ObservableField<DialogFragment?>()
+    private val _dialog = MutableLiveData<DialogFragment?>()
+    val dialog: LiveData<DialogFragment?>
+        get() = _dialog
 
-    val message =  ObservableField<Summary?>()
+    private val _message = MutableLiveData<Summary?>()
+    val message: LiveData<Summary?>
+        get() = _message
 
     private val updateStatusReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
@@ -333,12 +338,12 @@ class BlockListViewModel(application: Application) : AndroidViewModel(applicatio
     override fun isAppBlocked(app: Blockable): Boolean = mBlockSet.contains(app)
 
     override fun onEditItemClicked(app: Blockable) {
-        dialog.set(BlockListEditDialog.newInstance(app.getPackageName()))
+        _dialog.value = BlockListEditDialog.newInstance(app.getPackageName())
     }
 
     fun onFabClicked(@Suppress("UNUSED_PARAMETER")v: View) {
         if (_isEditing.value == true) {
-            dialog.set(BlockListEditDialog.newInstance(null))
+            _dialog.value = BlockListEditDialog.newInstance(null)
         } else {
             requestUploadList()
         }
@@ -346,7 +351,7 @@ class BlockListViewModel(application: Application) : AndroidViewModel(applicatio
 
     private fun requestUploadList() {
         if (isUploading()) {
-            message.set(newSummary(R.string.app_upload_busy))
+            _message.value = newSummary(R.string.app_upload_busy)
             return
         }
 
@@ -378,7 +383,7 @@ class BlockListViewModel(application: Application) : AndroidViewModel(applicatio
     private fun startUpload(timeOutMessage: String, message: String = mContext.getString(R.string.app_upload_start)) {
         timer = Instant.now()
         _uploadStatus.value = LoadStatus.START
-        updateMessage.set(message)
+        _updateMessage.value = message
 
         uploadTimeOutWatcher.set(viewModelScope.launch {
             delay(MAX_UPLOAD_TIME_MILLIS)
@@ -399,10 +404,10 @@ class BlockListViewModel(application: Application) : AndroidViewModel(applicatio
             if (cost < 600L) delay(1000L) // wait longer
             if (succeed) {
                 _uploadStatus.value = LoadStatus.SUCCEED
-                message.set(Summary(msg))
+                _message.value = Summary(msg)
             } else {
                 _uploadStatus.value = LoadStatus.FAILED
-                updateMessage.set(msg)
+                _updateMessage.value = msg
             }
             doOnEnd?.invoke()
         }
@@ -413,7 +418,7 @@ class BlockListViewModel(application: Application) : AndroidViewModel(applicatio
             refreshList(false)
         }
         if (selected) {
-            message.set(newSummary(R.string.app_hook_system_message))
+            _message.value = newSummary(R.string.app_hook_system_message)
         }
     }
 
@@ -450,12 +455,20 @@ class BlockListViewModel(application: Application) : AndroidViewModel(applicatio
                 viewModelScope.launch(Dispatchers.Main) {
                     val cost = Duration.between(timer, Instant.now()).toMillis()
                     if (cost < 600L) delay(1600L) // wait for toast
-                    dialog.set(ActivationScopeDialog())
+                    _dialog.value = ActivationScopeDialog()
                 }
             }
         } else {
             stopUpload(false)
         }
+    }
+
+    fun consumeDialog() {
+        _dialog.value = null
+    }
+
+    fun consumeMessage() {
+        _message.value = null
     }
 
     private fun newSummary(@StringRes message: Int) = Summary(mContext.getString(message))

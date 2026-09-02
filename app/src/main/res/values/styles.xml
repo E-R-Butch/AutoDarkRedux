@@ -18,21 +18,6 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 
-    <!-- Dynamic Colors overlay - applied automatically via DynamicColors.applyToActivitiesIfAvailable() -->
-    <style name="AppTheme.Dynamic" parent="ThemeOverlay.Material3.DynamicColors.DayNight" />
-
-    <style name="AppTheme.ActionBar" parent="Theme.Material3.DayNight">
-        <item name="android:windowLightStatusBar">true</item>
-        <item name="android:windowLightNavigationBar">true</item>
-        <item name="android:statusBarColor">?attr/colorSurface</item>
-        <item name="android:navigationBarColor">?attr/colorSurface</item>
-    </style>
-
-    <style name="AppTheme.ActionBar.Preview" parent="AppTheme.ActionBar">
-        <item name="android:statusBarColor">?attr/colorSurface</item>
-        <item name="android:navigationBarColor">?attr/colorSurface</item>
-    </style>
-
     <style name="AppTheme.Transparent" parent="AppTheme">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
@@ -110,6 +95,16 @@
 
     <style name="CardProgress" parent="Widget.AppCompat.ProgressBar"/>
 
+    <style name="ManagerAppListTextAppearance" parent="TextAppearance.Material3.BodyMedium"/>
+
+    <style name="SimpleDialogStyle" parent="ThemeOverlay.Material3.Dialog"/>
+
+    <style name="BaseDialogTextAppearance" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+    </style>
+
     <style name="MaterialCircleIconView">
         <item name="iconForegroundChroma">100</item>
         <item name="iconBackgroundChroma">600</item>
@@ -118,32 +113,6 @@
         <item name="android:backgroundTintMode">src_in</item>
     </style>
 
-    <style name="MaterialPickerButton" parent="Widget.Material3.Button"/>
 
-    <style name="ManagerAppListTextAppearance" parent="TextAppearance.Material3.BodyMedium"/>
 
-    <style name="SimpleDialogStyle" parent="ThemeOverlay.Material3.Dialog"/>
-
-    <style name="set_wallpaper_destination_item" parent="Widget.Material3.Button.TextButton"/>
-
-    <!-- Restored from old for compat, now Material3 -->
-    <style name="PreviewCard" parent="Widget.Material3.CardView.Elevated">
-        <item name="android:clipChildren">true</item>
-        <item name="contentPadding">0dp</item>
-        <item name="cardCornerRadius">16dp</item>
-    </style>
-
-    <style name="BaseDialogTextAppearance" parent="TextAppearance.Material3.TitleMedium">
-        <item name="android:paddingTop">16dp</item>
-        <item name="android:paddingStart">16dp</item>
-        <item name="android:paddingEnd">16dp</item>
-    </style>
-
-    <style name="TitleTextAppearance" parent="TextAppearance.Material3.TitleLarge"/>
-
-    <style name="OptionTitleTextAppearance" parent="TitleTextAppearance">
-        <item name="android:textAlignment">center</item>
-        <item name="android:textSize">@dimen/option_title_font_text_size</item>
-        <item name="android:lineHeight">@dimen/option_title_line_height</item>
-    </style>
 </resources>

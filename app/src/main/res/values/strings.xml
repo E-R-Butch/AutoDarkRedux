@@ -1,25 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_about">About AutoDark</string>
-    <string name="app_apply">Apply</string>
-    <string name="app_clear">Clear</string>
     <string name="app_confirm">OK</string>
-    <string name="app_crop">Crop wallpaper</string>
     <string name="app_delete">Delete</string>
     <string name="app_do_not_show">Do not show this again</string>
     <string name="app_blocked_first">Blocked first</string>
     <string name="app_edit">Edit</string>
-    <string name="app_exit">exit</string>
     <string name="app_hook_ime">Try Hook input method</string>
     <string name="app_hook_ime_restart">Restart  <xliff:g name="inputmethod">%1$s</xliff:g> to take effect</string>
     <string name="app_hook_system">Show System App</string>
     <string name="app_hook_system_message">System apps usually supports dark mode</string>
     <string name="app_later">Remind me later</string>
     <string name="app_list_option">List options</string>
-    <string name="app_loading">Loading...</string>
     <string name="app_location_failed">Location is not available now, please configure the time manually.</string>
     <string name="app_location_disabled">Location is disabled.</string>
-    <string name="app_select_img">Select Picture</string>
     <string name="app_xposed_option">Xposed Options</string>
 
     <string name="app_restricted">Some vendors (like Oneplus) restrict app background activity to optimize their battery.
@@ -32,17 +26,13 @@
     <string name="app_save">Save</string>
     <string name="app_search_hint">Search</string>
     <string name="app_search_blocked"><xliff:g name="search">%1$s</xliff:g> blocked apps</string>
-    <string name="app_success">Operation succeeded</string>
-    <string name="app_try_again">Try again</string>
     <string name="app_upload_fail">Unable to save app list, please send debugging logs to the developer to help solve the issue.</string>
     <string name="app_upload_success">Success, restart these blocked apps to see effects</string>
     <string name="app_upload_busy">Can\'t save list at this moment.</string>
-    <string name="app_upload_start">Saving block list, please wait...</string>
+    <string name="app_upload_start">Saving block list, please wait…</string>
 
     <!-- Accessibility label for paging indicator in theme picker preview [CHAR LIMIT=NONE] -->
-    <string name="accessibility_preview_pager" msgid="3548503287402185430">Page <xliff:g name="current_page" example="1">%1$d</xliff:g> of <xliff:g name="num_pages" example="2">%2$d</xliff:g></string>
 
-    <string name="check_orientation">Check orientation when set</string>
 
     <string name="dark_mode_disabled">Master switch is off now.</string>
     <string name="dark_mode_permission_denied">Failed to set darkMode: Permission denied!</string>
@@ -51,8 +41,6 @@
     <string name="dark_mode_summary_will_off">Will turn off dark mode at <xliff:g name="time">%1$s</xliff:g></string>
     <string name="dark_mode_summary_will_on">Will turn on dark mode at <xliff:g name="time">%1$s</xliff:g></string>
 
-    <string name="delete_wallpapers">Delete <xliff:g name="pref_dark_wallpaper_title">%1$s</xliff:g></string>
-    <string name="delete_wallpapers_confirm">this operation cannot be undone</string>
 
     <string name="feedback_send">Send Email</string>
     <string name="feedback_subject">AutoDark Feedback</string>
@@ -87,7 +75,6 @@
 
     <!-- Permission activity -->
     <string name="adb_check">Check</string>
-    <string name="adb_check_failed">Failed! make sure you typed right command.</string>
     <string name="adb_description">Use your PC/Mac to grant permission through ADB."
         "\n First Please read this <a href="https://developer.android.com/studio/command-line/adb.html">ADB guide</a>."
         "\n After you read the guide and know how to use ADB, click the share/copy button below to send the command code to your PC/Mac."
@@ -102,62 +89,28 @@
     <string name="block_edit_package_hint">Package Name</string>
     <string name="block_edit_package_error">Invalid package name</string>
 
-    <string name="chooser_category_wallpaper">Wallpapers</string>
-    <string name="chooser_category_live_wallpaper">Live wallpapers</string>
-    <string name="chooser_live_wallpaper_restricted_description">Changing Live wallpapers requires
-        Shizuku/Sui to access privilege API.
-        \nThis is Optional, dismiss if you don\'t need LiveWallpaper.\n
-        \nSee also: <a href="https://android.googlesource.com/platform/frameworks/base/+/android-11.0.0_r1/services/core/java/com/android/server/wallpaper/WallpaperManagerService.java">WallpaperManagerService</a>
-    </string>
-    <string name="chooser_live_wallpaper_restricted_hide">Hide</string>
-    <string name="chooser_live_wallpaper_restricted_title">Live wallpapers unavailable</string>
 
-    <string name="load_wallpaper_error_message">Unable to load wallpaper. The image is either corrupted or unavailable.</string>
 
     <string name="permission_title">Grant permission</string>
     <string name="permission_description">AutoDark needs to change system dark mode. Recommended: grant via Shizuku (one tap, no PC). ADB/Root fallback still available.</string>
     <string name="permission_granted">Permission granted</string>
     <string name="permission_failed">Failed to grant permission!</string>
 
-    <string name="permission_wallpaper">Access system Wallpaper Manager needs storage permission.</string>
-    <string name="permission_wallpaper_manually_title">Open [App Info page]</string>
-    <string name="permission_wallpaper_manually"><xliff:g name="permission_wallpaper">%1$s</xliff:g>\n\n
-        <xliff:g name="permission_wallpaper_manually_title">%2$s</xliff:g>
-        :\nClick permission -> Set [Storage] permission to Allow.
-    </string>
 
     <string name="root_check_failed">Failed to get root permission!</string>
     <string name="root_description">If your device is rooted, you can grant permission with root now.</string>
     <string name="root_grant">Grant Permission</string>
     <string name="root_title">Grant permission using root</string>
 
-    <string name="service_rotation_name">Rotation Listener</string>
-    <string name="service_rotation_listening">Detecting screen rotation changes</string>
 
-    <string name="service_wallpaper_channel_name">Set <xliff:g name="chooser_category_live_wallpaper">%1$s</xliff:g></string>
-    <string name="service_wallpaper_waiting">Waiting for Shizuku&#8230;</string>
-    <string name="service_wallpaper_setting">Shizuku is online, applying wallpaper&#8230;</string>
-    <string name="service_wallpaper_failed_title">Unable to set Live Wallpaper</string>
-    <string name="service_wallpaper_failed_error">Error occurred: <xliff:g name="error">%1$s</xliff:g></string>
 
     <string name="shizuku_connect_failed">Unable to connect the Shizuku core service, please make sure it is running.</string>
     <string name="shizuku_open_manager">Open Shizuku</string>
     <string name="shizuku_description">Recommended: Grant directly via <xliff:g name="shizuku_or_sui">%1$s</xliff:g> (one tap, no PC).</string>
     <string name="shizuku_not_install">Shizuku is not installed!</string>
-    <string name="shizuku_service_not_running">Shizuku service is not running!</string>
 
-    <string name="save_wallpaper_error_title">Unable to save wallpaper</string>
-    <string name="save_wallpaper_dialog_title">Apply to</string>
-    <string name="save_wallpaper_success_message">Wallpaper saved</string>
 
-    <string name="set_wallpaper_home_screen_destination">Home screen</string>
-    <string name="set_wallpaper_lock_screen_destination">Lock screen</string>
-    <string name="set_wallpaper_both_destination">Home screen and lock screen</string>
 
-    <string name="prepare_wallpaper_progress_message">Preparing wallpaper&#8230;</string>
-    <string name="pick_wallpaper">Pick <xliff:g name="type">%1$s</xliff:g></string>
-    <string name="pick_wallpaper_type_normal">@string/chooser_category_wallpaper</string>
-    <string name="pick_wallpaper_type_dark">Dark Wallpapers</string>
 
     <string name="tile_dark_theme">Dark theme</string>
 
@@ -170,4 +123,8 @@
     <string name="inputmethod">input method</string>
 
     <string name="xposed_description">This Enables Force-Dark Block list: the apps that you choose won\'t get Force-Dark (Experimental).</string>
+    <string name="accessibility_toggle_dark_mode">Toggle dark mode</string>
+    <string name="accessibility_back">Back</string>
+    <string name="accessibility_more">More options</string>
+
 </resources>

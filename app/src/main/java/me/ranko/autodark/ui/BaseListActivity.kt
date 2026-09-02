@@ -1,11 +1,11 @@
 package me.ranko.autodark.ui
 
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import me.ranko.autodark.Utils.ViewUtil
@@ -22,13 +22,9 @@ abstract class BaseListActivity : AppCompatActivity(), OnApplyWindowInsetsListen
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (isLandScape.not()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                window.setDecorFitsSystemWindows(false)
-            } else {
-                getRootView().systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE.or(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION)
-            }
+            WindowCompat.setDecorFitsSystemWindows(window, false)
         }
-        ViewCompat.setOnApplyWindowInsetsListener(window!!.decorView.rootView, this)
+        ViewCompat.setOnApplyWindowInsetsListener(window.decorView.rootView, this)
     }
 
     override fun onApplyWindowInsets(v: View, insets: WindowInsetsCompat): WindowInsetsCompat {

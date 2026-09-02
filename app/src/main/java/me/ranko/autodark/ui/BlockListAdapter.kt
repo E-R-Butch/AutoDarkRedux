@@ -192,8 +192,9 @@ class BlockListAdapter(context: Context,
         mDiffJob?.let { job -> if (job.isActive) job.cancel() }
 
         if (this.data.isEmpty() || data.isEmpty() || !isSearchMode) {
+            val oldSize = this.data.size
             this.data = data
-            notifyDataSetChanged()
+            notifyCollectionChanged(oldSize, data.size)
         } else {
             val start = System.currentTimeMillis()
             mDiffJob = CoroutineScope(Dispatchers.IO).launch {
@@ -210,6 +211,22 @@ class BlockListAdapter(context: Context,
                     result.dispatchUpdatesTo(this@BlockListAdapter)
                 }
             }
+        }
+    }
+
+    private fun notifyCollectionChanged(oldSize: Int, newSize: Int) {
+        when {
+            oldSize == 0 && newSize > 0 -> notifyItemRangeInserted(0, newSize)
+            newSize == 0 && oldSize > 0 -> notifyItemRangeRemoved(0, oldSize)
+            newSize > oldSize -> {
+                if (oldSize > 0) notifyItemRangeChanged(0, oldSize)
+                notifyItemRangeInserted(oldSize, newSize - oldSize)
+            }
+            newSize < oldSize -> {
+                if (newSize > 0) notifyItemRangeChanged(0, newSize)
+                notifyItemRangeRemoved(newSize, oldSize - newSize)
+            }
+            newSize > 0 -> notifyItemRangeChanged(0, newSize)
         }
     }
 

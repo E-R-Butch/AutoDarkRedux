@@ -4,7 +4,6 @@
     <string name="app_confirm">OK</string>
     <string name="app_do_not_show">Nicht erneut zeigen</string>
     <string name="app_later">Später erinnern</string>
-    <string name="app_loading">Lädt&#8230;</string>
     <string name="app_location_failed">Standort ist nicht verfügbar, bitte Zeit manuell konfigurieren.</string>
     <string name="app_location_disabled">Standort ist ausgeschaltet.</string>
 
@@ -22,7 +21,6 @@
     <string name="app_upload_busy">Liste kann im Moment nicht gespeichert werden.</string>
     <string name="app_upload_start">Blockliste wird gespeichert, bitte warten&#8230;</string>
 
-    <string name="accessibility_preview_pager" msgid="1839869637405028575">"Seite <xliff:g id="ID_1">%1$d</xliff:g> von <xliff:g id="ID_2">%2$d</xliff:g>"</string>
 
     <string name="dark_mode_disabled">Hauptschalter ist jetzt aus.</string>
     <string name="dark_mode_permission_denied">Dark Mode umschalten fehlgeschlagen: Berechtigung abgelehnt!</string>
@@ -62,7 +60,6 @@
 
     <!-- Permission activity -->
     <string name="adb_check">Überprüfen</string>
-    <string name="adb_check_failed">Fehlgeschlagen! Überprüfen, ob das korrekte Kommando eingetippt wurde.</string>
     <string name="adb_description">PC/Mac benutzen um Berechtigung mit ADB zu erteilen."
         "\n Bitte zuerst folgendes lesen: <a href="https://developer.android.com/studio/command-line/adb.html">ADB guide</a>."
         "\n Nachdem der Artikel gelese wurde und verstanden wurde wie ADB bedient wird, unten auf den Teilen-Button klicken um das Kommando an den PC/Mac zu senden."
@@ -73,7 +70,6 @@
     <string name="adb_share_text">Teilen</string>
     <string name="adb_title">Berechtigung mit ADB erteilen</string>
 
-    <string name="load_wallpaper_error_message">Der Hintergrund konnte nicht geladen werden. Das Bild ist entweder beschädigt oder nicht verfügbar.</string>
 
     <string name="permission_title">Berechtigung erteilen</string>
     <string name="permission_description">AutoDark benötigt die Berechtigung um den System-Dark-Mode zu ändern. Eine der drei folgenden Methoden verwenden um die Berechtigung zu erteilen.</string>
@@ -89,7 +85,6 @@
     <string name="shizuku_open_manager">Shizuku öffnen</string>
     <string name="shizuku_description">Berechtigung mittels <xliff:g name="shizuku_or_sui">%1$s</xliff:g> erteilen.</string>
     <string name="shizuku_not_install">Shizuku ist nicht installiert!</string>
-    <string name="shizuku_service_not_running">Shizuku-Service läuft nicht!</string>
 
     <string name="tile_dark_theme">Dark Theme</string>
 
@@ -98,4 +93,26 @@
     <string name="scope_recommended_lsp">Empfohlen</string>
 
     <string name="xposed_description">Force-Dark Blockliste einschalten: die ausgewählten Apps werden nicht in den Force-Dark-Modus gezwungen (experimentell).</string>
+    <string name="app_delete">Löschen</string>
+    <string name="app_blocked_first">Blockierte zuerst</string>
+    <string name="app_edit">Bearbeiten</string>
+    <string name="app_hook_ime">Eingabemethode testen</string>
+    <string name="app_hook_ime_restart">Starten Sie <xliff:g name="inputmethod">%1$s</xliff:g> neu, damit die Änderung wirksam wird</string>
+    <string name="app_hook_system">System-Apps anzeigen</string>
+    <string name="app_hook_system_message">System-Apps unterstützen normalerweise den Dark Mode</string>
+    <string name="app_list_option">Listenoptionen</string>
+    <string name="app_xposed_option">Xposed-Optionen</string>
+    <string name="app_search_blocked"><xliff:g name="search">%1$s</xliff:g> blockierte Apps</string>
+    <string name="block_edit_title">Blockliste bearbeiten</string>
+    <string name="block_edit_package_hint">Paketname</string>
+    <string name="block_edit_package_error">Ungültiger Paketname</string>
+    <string name="pref_dark_wallpaper_title">AutoDark-Hintergrundbild</string>
+    <string name="pref_dark_wallpaper_summary">Dunkle/helle Hintergrundbilder nach Zeitplan wechseln</string>
+    <string name="activation_scope">Aktivierungsbereich (erforderlich)</string>
+    <string name="activation_scope_description">Öffne die Modulseite des LSPosed-Managers und füge die Eingabemethode wie folgt zum Aktivierungsbereich hinzu:</string>
+    <string name="other_app">Andere App</string>
+    <string name="inputmethod">Eingabemethode</string>
+    <string name="accessibility_toggle_dark_mode">Dunkelmodus umschalten</string>
+    <string name="accessibility_back">Zurück</string>
+    <string name="accessibility_more">Weitere Optionen</string>
 </resources>

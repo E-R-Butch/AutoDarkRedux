@@ -1,39 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<me.ranko.autodark.ui.widget.PermissionLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/CardStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:expandDescription="true"
+    app:iconColor="indigo"
+    app:srcIcon="@drawable/ic_shizuku"
+    tools:description="@string/shizuku_description">
 
-    <data>
+    <TextView
+        android:id="@+id/btnShizuku"
+        style="@style/CardButton"
+        app:drawableStartCompat="@drawable/ic_grant"
+        android:text="@string/root_grant"
+        android:visibility="visible" />
 
-        <import type="me.ranko.autodark.core.ShizukuApi" />
-
-        <import type="me.ranko.autodark.AutoDarkApplication" />
-
-        <variable
-            name="viewModel"
-            type="me.ranko.autodark.ui.PermissionViewModel" />
-    </data>
-
-    <me.ranko.autodark.ui.widget.PermissionLayout
-        style="@style/CardStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:expandDescription="true"
-        app:iconColor="@{AutoDarkApplication.isSui ? ShizukuApi.SUI_COLOR : ShizukuApi.SHIZUKU_COLOR}"
-        app:srcIcon="@drawable/ic_shizuku"
-        app:title="@{AutoDarkApplication.isSui ? @string/sui_title : @string/shizuku_title}"
-        tools:description="@string/shizuku_description">
-
-        <TextView android:id="@+id/btnShizuku"
-            style="@style/CardButton"
-            android:drawableStart="@drawable/ic_grant"
-            android:onClick="onShizukuClick"
-            android:text="@string/root_grant"
-            app:hideOnLoading="@{viewModel.shizukuJobStatus}" />
-
-        <ProgressBar android:id="@+id/progressShizuku"
-            style="@style/CardProgress"
-            app:showOnLoading="@{viewModel.shizukuJobStatus}"
-            tools:visibility="visible" />
-    </me.ranko.autodark.ui.widget.PermissionLayout>
-</layout>
+    <ProgressBar
+        android:id="@+id/progressShizuku"
+        style="@style/CardProgress"
+        android:visibility="gone"
+        tools:visibility="visible" />
+</me.ranko.autodark.ui.widget.PermissionLayout>

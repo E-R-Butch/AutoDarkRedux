@@ -12,8 +12,6 @@ import android.util.Pair
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
 import androidx.core.content.ContextCompat
-import androidx.databinding.Observable
-import androidx.databinding.ObservableField
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -88,21 +86,6 @@ class MainFragment : PreferenceFragmentCompat(), DarkPreferenceSupplier {
         private const val XPOSED_ALIVE_TIME_OUT = 500L
     }
 
-    /**
-     * Sync master switch status to preferences
-     * */
-    private val switchObserver = object : Observable.OnPropertyChangedCallback() {
-        override fun onPropertyChanged(sender: Observable, propertyId: Int) {
-            when ((sender as ObservableField<*>).get() as DarkSwitch) {
-                DarkSwitch.SHARE -> return
-
-                DarkSwitch.ON -> setTimePreferenceEnabled(true)
-
-                DarkSwitch.OFF -> setTimePreferenceEnabled(false)
-            }
-        }
-    }
-
     private lateinit var viewModel: MainViewModel
 
     private val locationPermissionLauncher =
@@ -166,7 +149,11 @@ class MainFragment : PreferenceFragmentCompat(), DarkPreferenceSupplier {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.switch.addOnPropertyChangedCallback(switchObserver)
+        viewModel.switch.observe(viewLifecycleOwner) { state ->
+            if (state != DarkSwitch.SHARE) {
+                setTimePreferenceEnabled(state == DarkSwitch.ON)
+            }
+        }
 
         // observe auto mode job result
         // also init darkTimeCategory there
@@ -177,7 +164,7 @@ class MainFragment : PreferenceFragmentCompat(), DarkPreferenceSupplier {
             endPreference.isVisible = !result
 
             // enable time preference status
-            setTimePreferenceEnabled(viewModel.switch.get() == DarkSwitch.ON)
+            setTimePreferenceEnabled(viewModel.switch.value == DarkSwitch.ON)
         }
     }
 
@@ -241,7 +228,6 @@ class MainFragment : PreferenceFragmentCompat(), DarkPreferenceSupplier {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        viewModel.switch.removeOnPropertyChangedCallback(switchObserver)
         autoPreference.onPreferenceClickListener = null
     }
 

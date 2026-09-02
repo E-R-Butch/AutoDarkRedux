@@ -1,66 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <data>
-
-        <variable
-            name="viewModel"
-            type="me.ranko.autodark.ui.MainViewModel" />
-    </data>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/bottom_sheet_background"
+    android:orientation="vertical"
+    tools:ignore="Overdraw">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/bottom_sheet_background"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingTop="@dimen/dialog_separator_margin_vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/dialog_separator_margin_vertical"
-            android:orientation="vertical">
-
-            <TextView
-                style="@style/CardTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="@{viewModel.restricted ? @string/app_restricted_warning : @string/app_restricted_title}"
-                android:textSize="18sp" />
-
-            <TextView
-                style="@style/BaseDialogTextAppearance"
-                android:paddingTop="8dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:autoLink="web"
-                android:text="@string/app_restricted" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/material_grey_300"
-            android:layout_marginBottom="@dimen/dialog_separator_margin_vertical"/>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnLater"
+        <TextView
+            android:id="@+id/title"
+            style="@style/CardTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:outlineSpotShadowColor="?android:attr/colorPrimary"
-            android:text="@string/app_later" />
+            android:textSize="18sp" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnShutup"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
+        <TextView
+            style="@style/BaseDialogTextAppearance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
-            android:enabled="@{!viewModel.restricted}"
-            android:text="@string/app_do_not_show" />
+            android:autoLink="web"
+            android:paddingTop="8dp"
+            android:text="@string/app_restricted" />
     </LinearLayout>
-</layout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="@dimen/dialog_separator_margin_vertical"
+        android:background="@color/material_grey_300" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnLater"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:outlineSpotShadowColor="?android:attr/colorPrimary"
+        android:text="@string/app_later" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnShutup"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/app_do_not_show" />
+</LinearLayout>

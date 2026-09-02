@@ -3,10 +3,10 @@ package me.ranko.autodark.data
 import android.app.WallpaperManager
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.core.content.edit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
 
@@ -27,7 +27,6 @@ class WallpaperRepository(private val context: Context) {
         private const val KEY_LIGHT_LOCK = "light_lock"
         private const val KEY_DARK_HOME = "dark_home"
         private const val KEY_DARK_LOCK = "dark_lock"
-        private const val TAG = "WallpaperRepo"
     }
 
     private val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
@@ -59,7 +58,7 @@ class WallpaperRepository(private val context: Context) {
         }
 
         prefs.edit { putString(key, dest.absolutePath) }
-        Log.i(TAG, "Saved $key -> $destName")
+        Timber.i("Saved $key -> $destName")
         dest.absolutePath
     }
 
@@ -69,7 +68,7 @@ class WallpaperRepository(private val context: Context) {
      */
     suspend fun apply(isDark: Boolean) = withContext(Dispatchers.IO) {
         if (!hasAnyWallpaper()) {
-            Log.v(TAG, "No dual wallpaper set, skip apply")
+            Timber.v("No dual wallpaper set, skip apply")
             return@withContext
         }
 
@@ -80,7 +79,7 @@ class WallpaperRepository(private val context: Context) {
 
             val file = File(path)
             if (!file.exists()) {
-                Log.w(TAG, "Wallpaper file missing: $path")
+                Timber.w("Wallpaper file missing: $path")
                 continue
             }
 
@@ -88,10 +87,10 @@ class WallpaperRepository(private val context: Context) {
                 FileInputStream(file).use { input ->
                     val whichFlag = which
                     val id = wm.setStream(input, null, false, whichFlag)
-                    Log.i(TAG, "Applied ${flagName(which)} isDark=$isDark id=$id")
+                    Timber.i("Applied ${flagName(which)} isDark=$isDark id=$id")
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Failed to apply wallpaper $which isDark=$isDark", e)
+                Timber.e(e, "Failed to apply wallpaper $which isDark=$isDark")
             }
         }
     }
@@ -99,7 +98,7 @@ class WallpaperRepository(private val context: Context) {
     suspend fun clearAll() = withContext(Dispatchers.IO) {
         dir.listFiles()?.forEach { it.delete() }
         prefs.edit { clear() }
-        Log.i(TAG, "Cleared all dual wallpapers")
+        Timber.i("Cleared all dual wallpapers")
     }
 
     fun getWallpaperPath(isDark: Boolean, which: Int): String? =

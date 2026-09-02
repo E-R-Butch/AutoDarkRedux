@@ -7,8 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ObservableArrayList
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +28,7 @@ import java.nio.charset.StandardCharsets
  * */
 class LicenseActivity : AppCompatActivity(), LicenseAdapter.LicenseClickListener {
 
-    val mLicenseList: ObservableArrayList<License> = ObservableArrayList()
+    val mLicenseList: MutableList<License> = mutableListOf()
 
     private lateinit var adapter: LicenseAdapter
 
@@ -38,14 +36,16 @@ class LicenseActivity : AppCompatActivity(), LicenseAdapter.LicenseClickListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.license_activity)
-        binding.lifecycleOwner = this
+        binding = LicenseActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         adapter = LicenseAdapter(this)
 
         lifecycleScope.launch {
             readLicense(mLicenseList)
             binding.recyclerView.adapter = adapter
             adapter.setData(mLicenseList)
+            binding.progressBar.visibility = View.GONE
+            binding.recyclerView.visibility = View.VISIBLE
         }
     }
 
@@ -106,8 +106,22 @@ class LicenseAdapter(private val listener: LicenseClickListener) :
     }
 
     fun setData(list: List<License>) {
-        this.mList = list
-        notifyDataSetChanged()
+        val oldSize = mList?.size ?: 0
+        mList = list.toList()
+        val newSize = mList?.size ?: 0
+        when {
+            oldSize == 0 && newSize > 0 -> notifyItemRangeInserted(0, newSize)
+            newSize == 0 && oldSize > 0 -> notifyItemRangeRemoved(0, oldSize)
+            newSize > oldSize -> {
+                if (oldSize > 0) notifyItemRangeChanged(0, oldSize)
+                notifyItemRangeInserted(oldSize, newSize - oldSize)
+            }
+            newSize < oldSize -> {
+                if (newSize > 0) notifyItemRangeChanged(0, newSize)
+                notifyItemRangeRemoved(newSize, oldSize - newSize)
+            }
+            newSize > 0 -> notifyItemRangeChanged(0, newSize)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -122,7 +136,7 @@ class LicenseAdapter(private val listener: LicenseClickListener) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val license = mList!![position]
         holder.license = license
-        holder.binding.license = license
+        setLicense(holder.binding.root, license)
         holder.binding.root.setOnClickListener(holder)
     }
 }

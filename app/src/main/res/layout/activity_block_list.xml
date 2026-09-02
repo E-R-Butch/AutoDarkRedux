@@ -1,109 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.BlockListActivity">
 
-    <data>
+    <LinearLayout
+        android:id="@+id/progressRoot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:visibility="invisible">
 
-        <import type="android.view.View" />
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center_horizontal" />
 
-        <import type="me.ranko.autodark.core.LoadStatus" />
+        <ImageView
+            android:id="@+id/errorImg"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone" />
 
-        <variable
-            name="viewModel"
-            type="me.ranko.autodark.ui.BlockListViewModel" />
-    </data>
+        <TextView
+            android:id="@+id/progressText"
+            style="@style/CardTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:textAlignment="center" />
+    </LinearLayout>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/coordinatorRoot"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.BlockListActivity">
+        android:visibility="visible"
+        tools:visibility="visible">
 
-        <LinearLayout android:id="@+id/progressRoot"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical"
-            android:visibility="@{(viewModel.uploadStatus == LoadStatus.START || viewModel.uploadStatus == LoadStatus.FAILED) ? View.VISIBLE : View.INVISIBLE}">
-
-            <ProgressBar
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_gravity="center_horizontal"
-                android:visibility="@{viewModel.uploadStatus == LoadStatus.FAILED ? View.GONE : View.VISIBLE}" />
-
-            <ImageView android:id="@+id/errorImg"
-                android:layout_gravity="center_horizontal"
-                android:layout_width="240dp"
-                app:showImageOnError="@{viewModel.uploadStatus}"
-                android:layout_height="wrap_content" />
-
-            <TextView android:id="@+id/progressText"
-                style="@style/CardTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="@{viewModel.updateMessage}"
-                android:textAlignment="center" />
-        </LinearLayout>
-
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/swipeRefresh"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="@{(viewModel.uploadStatus == LoadStatus.START || viewModel.uploadStatus == LoadStatus.FAILED) ? View.INVISIBLE : View.VISIBLE}"
-            tools:visibility="visible">
+            android:clipToPadding="false"
+            android:paddingTop="?attr/actionBarSize"
+            android:scrollbars="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_block_list" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/appbar_background"
+        android:transitionName="trans_appbar"
+        app:liftOnScroll="true">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:theme="@style/Widget.ActionBarLight">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/toolbarEdit"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:scrollbars="vertical"
-                android:paddingTop="?attr/actionBarSize"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_block_list" />
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                android:background="@null"
+                android:inputType="textPersonName"
+                android:lines="1"
+                android:maxLines="1"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp" />
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/app_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/appbar_background"
-            android:transitionName="trans_appbar"
-            app:liftOnScroll="true">
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:transitionName="trans_fab"
+        android:contentDescription="@string/accessibility_toggle_dark_mode" />
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:focusable="true"
-                android:theme="@style/Widget.ActionBarLight"
-                android:focusableInTouchMode="true">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/toolbarEdit"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@null"
-                    android:inputType="textPersonName"
-                    android:lines="1"
-                    android:maxLines="1"
-                    android:paddingTop="6dp"
-                    android:paddingBottom="6dp"
-                    android:visibility="@{(viewModel.uploadStatus == LoadStatus.START || viewModel.uploadStatus == LoadStatus.FAILED) ? View.INVISIBLE : View.VISIBLE}" />
-            </androidx.appcompat.widget.Toolbar>
-        </com.google.android.material.appbar.AppBarLayout>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
-            android:onClick="@{viewModel::onFabClicked}"
-            android:transitionName="trans_fab" />
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-</layout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -8,9 +8,6 @@ import android.view.WindowManager
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.Observable
-import androidx.databinding.ObservableField
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.*
 import androidx.preference.PreferenceFragmentCompat
@@ -26,13 +23,6 @@ class MainActivity : BaseListActivity(), FragmentManager.OnBackStackChangedListe
     private lateinit var binding: ActivityMainBinding
 
     private var restrictedDialog: BottomSheetDialog? = null
-
-    private val summaryTextListener = object : Observable.OnPropertyChangedCallback() {
-        override fun onPropertyChanged(sender: Observable, propertyId: Int) {
-            val summary = (sender as ObservableField<*>).get()
-            showSummary(summary as MainViewModel.Companion.Summary)
-        }
-    }
 
     private lateinit var permissionObserver: PermissionResultObserver
 
@@ -56,11 +46,12 @@ class MainActivity : BaseListActivity(), FragmentManager.OnBackStackChangedListe
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        binding.lifecycleOwner = this
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         val provider = ViewModelProvider(this, MainViewModel.Companion.Factory(application))
         viewModel = provider[MainViewModel::class.java]
-        binding.viewModel = viewModel
+        binding.fab.setOnClickListener { viewModel.onFabClicked() }
+        viewModel.switch.observe(this) { state -> setActiveImg(binding.fab, state) }
         lifecycle.addObserver(viewModel)
 
         if (!AutoDarkApplication.checkSecurePermission(this)) {
@@ -70,17 +61,19 @@ class MainActivity : BaseListActivity(), FragmentManager.OnBackStackChangedListe
 
         super.onCreate(savedInstanceState)
 
-        viewModel.summaryText.addOnPropertyChangedCallback(summaryTextListener)
-        viewModel.requirePermission.observe(this, Observer { required ->
-            if (!required) return@Observer // ignore consumed signal
-
-            permissionObserver.launchPermission(binding.fab)
-            viewModel.onRequirePermissionConsumed()
-        })
+        viewModel.summaryText.observe(this) { summary ->
+            summary?.let(::showSummary)
+        }
+        viewModel.requirePermission.observe(this) { required ->
+            if (required) {
+                permissionObserver.launchPermission(binding.fab)
+                viewModel.onRequirePermissionConsumed()
+            }
+        }
 
         if (isLandScape) {
             val collapsingToolbar =
-                    binding.appbar.findViewById<CollapsingToolbarLayout>(R.id.collapsingToolbar)!!
+                    binding.appbar.root.findViewById<CollapsingToolbarLayout>(R.id.collapsingToolbar)!!
             val transparent = ColorStateList.valueOf(getColor(android.R.color.transparent))
             collapsingToolbar.setExpandedTitleTextColor(transparent)
             window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
@@ -133,7 +126,6 @@ class MainActivity : BaseListActivity(), FragmentManager.OnBackStackChangedListe
     }
 
     override fun onDestroy() {
-        viewModel.summaryText.removeOnPropertyChangedCallback(summaryTextListener)
         supportFragmentManager.removeOnBackStackChangedListener(this)
         super.onDestroy()
     }

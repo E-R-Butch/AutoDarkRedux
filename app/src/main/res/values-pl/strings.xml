@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_about">O aplikacji AutoDark</string>
-    <string name="app_apply">Zastosuj</string>
     <string name="app_confirm">OK</string>
     <string name="app_do_not_show">Nie wyświetlaj więcej</string>
     <string name="app_later">Przypomnij mi później</string>
@@ -16,9 +15,7 @@
     <string name="app_restricted_title">Problemy na niektórych urządzeniach</string>
     <string name="app_restricted_warning">Wykryto problem</string>
 
-    <string name="app_try_again">Spróbuj ponownie</string>
 
-    <string name="accessibility_preview_pager" msgid="1839869637405028575">"Strona <xliff:g id="ID_1">%1$d</xliff:g> z <xliff:g id="ID_2">%2$d</xliff:g>"</string>
 
     <string name="dark_mode_disabled">Przełącznik główny jest wyłączony.</string>
     <string name="dark_mode_permission_denied">Włączanie trybu nocnego nie powiodło się: brak uprawnień!</string>
@@ -42,7 +39,6 @@
     <string name="pref_time_end">Godzina zakończenia</string>
 
     <string name="adb_check">Sprawdź</string>
-    <string name="adb_check_failed">Niepowodzenie! Upewnij się, że wpisałeś komendę poprawnie.</string>
     <string name="adb_description">Użyj swojego komputera by przyznać uprawnienia."
         "\n Na początku proszę przeczytać tę instrukcję: <a href="https://developer.android.com/studio/command-line/adb.html">ADB guide</a>."
         "\n Po przeczytaniu instrukcji i zapoznaniu się z ADB, naciśnij przycisk \'Wyślij komendę\' i prześlij (bądź przepisz) ją na swój komputer."
@@ -53,10 +49,7 @@
     <string name="adb_share_text">Prześlij używając</string>
     <string name="adb_title">Przyznaj uprawnienia z użyciem ADB</string>
 
-    <string name="chooser_category_wallpaper">Tapeta</string>
-    <string name="chooser_category_live_wallpaper">Animowane tapety</string>
 
-    <string name="load_wallpaper_error_message">Nie można załadować tapety. Obraz jest uszkodzony lub niedostępny.</string>
 
     <string name="permission_title">Przyznaj uprawnienia</string>
     <string name="permission_description">AutoDark potrzebuje uprawnień, by zmienić systemowy tryb nocny. Użyj jednej z poniższych metod, by przyznać uprawnienia.</string>
@@ -70,11 +63,55 @@
 
     <string name="shizuku_description">Przyznaj uprawnienia używając <xliff:g name="shizuku_or_sui">%1$s</xliff:g>.</string>
     <string name="shizuku_not_install">Shizuku nie jest zainstalowane!</string>
-    <string name="shizuku_service_not_running">Usługa Shizuku nie działa!</string>
 
-    <string name="set_wallpaper_home_screen_destination">Ekran główny</string>
-    <string name="set_wallpaper_lock_screen_destination">Ekran blokady</string>
-    <string name="set_wallpaper_both_destination">Ekran główny i ekran blokady</string>
 
     <string name="tile_dark_theme">Ciemny motyw</string>
+    <string name="app_delete">Usuń</string>
+    <string name="app_blocked_first">Najpierw zablokowane</string>
+    <string name="app_edit">Edytuj</string>
+    <string name="app_hook_ime">Wypróbuj przechwytywanie metody wprowadzania</string>
+    <string name="app_hook_ime_restart">Uruchom ponownie <xliff:g name="inputmethod">%1$s</xliff:g>, aby zastosować zmianę</string>
+    <string name="app_hook_system">Pokaż aplikacje systemowe</string>
+    <string name="app_hook_system_message">Aplikacje systemowe zwykle obsługują tryb nocny</string>
+    <string name="app_list_option">Opcje listy</string>
+    <string name="app_xposed_option">Opcje Xposed</string>
+    <string name="app_save">Zapisz</string>
+    <string name="app_search_hint">Szukaj</string>
+    <string name="app_search_blocked"><xliff:g name="search">%1$s</xliff:g> zablokowanych aplikacji</string>
+    <string name="app_upload_fail">Nie można zapisać listy aplikacji. Wyślij logi debugowania deweloperowi, aby pomóc rozwiązać problem.</string>
+    <string name="app_upload_success">Gotowe, uruchom ponownie zablokowane aplikacje, aby zobaczyć efekt</string>
+    <string name="app_upload_busy">Nie można teraz zapisać listy.</string>
+    <string name="app_upload_start">Zapisywanie listy blokad, proszę czekać&#8230;</string>
+    <string name="pref_block_title">Lista blokad Force Dark%1$s</string>
+    <string name="pref_block_summary">Wybrane aplikacje nie będą otrzymywać Force Dark</string>
+    <string name="pref_bug_title">Zgłoś błąd</string>
+    <string name="pref_contact">Skontaktuj się ze mną</string>
+    <string name="pref_dark_wallpaper_title">Tapeta AutoDark</string>
+    <string name="pref_dark_wallpaper_summary">Zmieniaj jasną i ciemną tapetę zgodnie z harmonogramem</string>
+    <string name="pref_feedback_title">Opinie</string>
+    <string name="pref_feedback_summary">Wszelkie sugestie są mile widziane</string>
+    <string name="pref_force_dark_summary_xposed">\nTryb Xposed aktywowany.</string>
+    <string name="pref_license_title">Licencje open source</string>
+    <string name="pref_license_summary">Szczegóły licencji oprogramowania open source</string>
+    <string name="pref_trans_title">Tłumacze</string>
+    <string name="pref_share_title">Udostępnij</string>
+    <string name="pref_share_summary">Jeśli Ci się podoba, udostępnij</string>
+    <string name="pref_source_title">Open source</string>
+    <string name="pref_source_summary">Wyświetl kod źródłowy na GitHubie</string>
+    <string name="pref_version">Wersja</string>
+    <string name="block_edit_title">Edytuj listę blokad</string>
+    <string name="block_edit_package_hint">Nazwa pakietu</string>
+    <string name="block_edit_package_error">Nieprawidłowa nazwa pakietu</string>
+    <string name="shizuku_connect_failed">Nie można połączyć się z usługą Shizuku. Upewnij się, że jest uruchomiona.</string>
+    <string name="shizuku_open_manager">Otwórz Shizuku</string>
+    <string name="activation_scope">Zakres aktywacji (wymagany)</string>
+    <string name="activation_scope_description">Przejdź do strony modułów menedżera LSPosed i dodaj metodę wprowadzania do zakresu aktywacji:</string>
+    <string name="enable_scope_lsp">Włącz moduł</string>
+    <string name="scope_recommended_lsp">Zalecane</string>
+    <string name="other_app">Inna aplikacja</string>
+    <string name="inputmethod">Metoda wprowadzania</string>
+    <string name="xposed_description">Włącza listę blokad Force Dark: wybrane aplikacje nie będą otrzymywać Force Dark (eksperymentalne).</string>
+    <string name="accessibility_toggle_dark_mode">Przełącz tryb nocny</string>
+    <string name="accessibility_back">Wstecz</string>
+    <string name="accessibility_more">Więcej opcji</string>
 </resources>

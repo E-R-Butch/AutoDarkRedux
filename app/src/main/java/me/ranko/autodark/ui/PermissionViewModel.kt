@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.view.View
-import androidx.databinding.ObservableInt
 import androidx.lifecycle.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -24,9 +23,9 @@ class PermissionViewModel(application: Application) : ShizukuViewModel(applicati
      *
      * @see LoadStatus
      * */
-    val sudoJobStatus = ObservableInt()
-    val adbJobStatus = ObservableInt()
-    val shizukuJobStatus = ObservableInt()
+    val sudoJobStatus = MutableLiveData<Int>()
+    val adbJobStatus = MutableLiveData<Int>()
+    val shizukuJobStatus = MutableLiveData<Int>()
 
     private val _permissionResult = MutableLiveData<Boolean>()
     val permissionResult: LiveData<Boolean>
@@ -41,9 +40,9 @@ class PermissionViewModel(application: Application) : ShizukuViewModel(applicati
     /**
      * Procedure to grant secure permission
      * */
-    private fun grantPermission(jobIndicator: ObservableInt) = viewModelScope.launch {
+    private fun grantPermission(jobIndicator: MutableLiveData<Int>) = viewModelScope.launch {
         try {
-            jobIndicator.set(LoadStatus.START)
+            jobIndicator.value = LoadStatus.START
             // Redux: all grants go via Shizuku unified route (Shizuku can be root-started)
             val granted = ShizukuApi.unifiedGrant(getApplication())
             if (!granted) {
@@ -64,7 +63,7 @@ class PermissionViewModel(application: Application) : ShizukuViewModel(applicati
             // Notify permission result
             _permissionResult.value = AutoDarkApplication.checkSecurePermission(getApplication())
             // Notify job completed
-            jobIndicator.set(if (_permissionResult.value!!) LoadStatus.SUCCEED else LoadStatus.FAILED)
+            jobIndicator.value = if (_permissionResult.value!!) LoadStatus.SUCCEED else LoadStatus.FAILED
         }
     }
 

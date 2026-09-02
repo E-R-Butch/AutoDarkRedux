@@ -69,6 +69,7 @@ class DarkModeTileService : TileService() {
         }
     }
 
+    @Suppress("DEPRECATION")
     @SuppressLint("StartActivityAndCollapseDeprecated")
     private fun collapseLegacy(intent: Intent) {
         startActivityAndCollapse(intent)

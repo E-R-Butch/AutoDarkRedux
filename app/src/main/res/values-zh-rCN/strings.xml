@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_about">关于 AutoDark</string>
-    <string name="app_apply">应用</string>
-    <string name="app_clear">清除</string>
     <string name="app_confirm">好的</string>
-    <string name="app_crop">裁剪壁纸</string>
     <string name="app_delete">删除</string>
     <string name="app_do_not_show">不再显示</string>
     <string name="app_blocked_first">黑名单优先</string>
     <string name="app_edit">编辑</string>
-    <string name="app_exit">退出</string>
     <string name="app_hook_ime">尝试Hook 输入法</string>
     <string name="app_hook_ime_restart">重启<xliff:g name="inputmethod">%1$s</xliff:g>生效</string>
     <string name="app_hook_system">显示系统应用</string>
@@ -18,7 +14,6 @@
     <string name="app_list_option">列表选项</string>
     <string name="app_location_failed">获取当前位置失败, 请手动设置时间.</string>
     <string name="app_location_disabled">定位服务已关闭.</string>
-    <string name="app_select_img">选择图片</string>
     <string name="app_xposed_option">Xposed 选项</string>
 
     <string name="app_restricted">一些厂商(比如一加)会为了优化电池而限制应用后台.
@@ -31,16 +26,12 @@
     <string name="app_save">保存</string>
     <string name="app_search_hint">搜索</string>
     <string name="app_search_blocked"><xliff:g name="search">%1$s</xliff:g>拉黑的应用</string>
-    <string name="app_success">操作成功完成</string>
-    <string name="app_try_again">重试</string>
     <string name="app_upload_fail">无法保存列表, 请将调试日志发送给开发者以帮助解决问题.</string>
     <string name="app_upload_success">成功, 重启黑名单中的应用来查看效果</string>
     <string name="app_upload_busy">现在无法保存</string>
     <string name="app_upload_start">正在保存, 请稍候&#8230;</string>
 
-    <string name="accessibility_preview_pager" msgid="1839869637405028575">"第 <xliff:g id="ID_1">%1$d</xliff:g> 页，共 <xliff:g id="ID_2">%2$d</xliff:g> 页"</string>
 
-    <string name="check_orientation">设置时检测方向</string>
 
     <string name="dark_mode_disabled">主开关已关闭</string>
     <string name="dark_mode_permission_denied">设置失败, 无权限!</string>
@@ -49,8 +40,6 @@
     <string name="dark_mode_summary_will_on">将在 <xliff:g name="time">%1$s</xliff:g> 开启黑暗模式</string>
     <string name="dark_mode_summary_will_off">将在 <xliff:g name="time">%1$s</xliff:g> 关闭黑暗模式</string>
 
-    <string name="delete_wallpapers">删除<xliff:g name="pref_dark_wallpaper_title">%1$s</xliff:g></string>
-    <string name="delete_wallpapers_confirm">此操作将不可逆</string>
 
     <string name="feedback_send">发送邮件</string>
     <string name="feedback_subject">AutoDark 反馈</string>
@@ -84,7 +73,6 @@
     <string name="pref_version">版本号</string>
 
     <string name="adb_check">测试</string>
-    <string name="adb_check_failed">失败! 请输入正确的指令</string>
     <string name="adb_description">使用你的 PC/Mac 来授予 ADB 权限."
         "\n 请阅读这份 <a href="https://developer.android.google.cn/studio/command-line/adb.html">ADB指南</a>."
         "\n 当您已阅读指南并且知道如何使用 ADB 后, 点击下方的 分享/复制 按钮将指令发送到您的 PC/Mac 上."
@@ -99,62 +87,28 @@
     <string name="block_edit_package_hint">包名</string>
     <string name="block_edit_package_error">非法的包名</string>
 
-    <string name="chooser_category_wallpaper">壁纸</string>
-    <string name="chooser_category_live_wallpaper">动态壁纸</string>
-    <string name="chooser_live_wallpaper_restricted_description">设置动态壁纸需通过
-        Shizuku/Sui 访问系统API.
-        \n这是可选项, 点击隐藏如果您不使用动态壁纸.\n
-        \n查看详细: <a href="https://github.com/aosp-mirror/platform_frameworks_base/blob/android-11.0.0_r1/services/core/java/com/android/server/wallpaper/WallpaperManagerService.java">WallpaperManagerService</a>
-    </string>
-    <string name="chooser_live_wallpaper_restricted_hide">隐藏</string>
-    <string name="chooser_live_wallpaper_restricted_title">动态壁纸不可用</string>
 
-    <string name="load_wallpaper_error_message">无法加载壁纸, 图片已损坏或不可用.</string>
 
     <string name="permission_title">授予权限</string>
     <string name="permission_description">AutoDark 需要您的授权以更改系统黑暗模式. 使用下列三种方式之一来授予该权限.</string>
     <string name="permission_granted">权限已授予</string>
     <string name="permission_failed">获取权限失败!</string>
 
-    <string name="permission_wallpaper">访问系统壁纸管理器需要存储空间权限.</string>
-    <string name="permission_wallpaper_manually_title">打开 [应用信息]</string>
-    <string name="permission_wallpaper_manually"><xliff:g name="permission_wallpaper">%1$s</xliff:g>\n\n
-        <xliff:g name="permission_wallpaper_manually_title">%2$s</xliff:g>
-        :\n点击权限 -> 选择允许 [存储空间].
-    </string>
 
     <string name="root_check_failed">获取 Root 权限失败</string>
     <string name="root_description">如果你的设备拥有 Root 权限, 现在就可授权.</string>
     <string name="root_grant">授权</string>
     <string name="root_title">使用 Root 授权</string>
 
-    <string name="service_rotation_name">旋转事件监听器</string>
-    <string name="service_rotation_listening">检测屏幕方向变化</string>
 
-    <string name="service_wallpaper_channel_name">设置 <xliff:g name="chooser_category_live_wallpaper">%1$s</xliff:g></string>
-    <string name="service_wallpaper_waiting">正在等待Shizuku&#8230;</string>
-    <string name="service_wallpaper_setting">Shizuku 已启动, 正在应用壁纸&#8230;</string>
-    <string name="service_wallpaper_failed_title">无法设置动态壁纸</string>
-    <string name="service_wallpaper_failed_error">出现错误: <xliff:g name="error">%1$s</xliff:g></string>
 
     <string name="shizuku_connect_failed">无法连接到Shizuku 核心服务, 请确保Shizuku 正在运行.</string>
     <string name="shizuku_open_manager">打开 Shizuku</string>
     <string name="shizuku_description">推荐: 由<xliff:g name="shizuku_or_sui">%1$s</xliff:g> 直接授权 (一键完成, 无需电脑)</string>
     <string name="shizuku_not_install">Shizuku 并未安装!</string>
-    <string name="shizuku_service_not_running">Shizuku 服务未运行</string>
 
-    <string name="save_wallpaper_error_title">无法保存壁纸</string>
-    <string name="save_wallpaper_dialog_title">应用到</string>
-    <string name="save_wallpaper_success_message">壁纸已保存</string>
 
-    <string name="set_wallpaper_home_screen_destination">主屏幕</string>
-    <string name="set_wallpaper_lock_screen_destination">锁定屏幕</string>
-    <string name="set_wallpaper_both_destination">主屏幕和锁定屏幕</string>
 
-    <string name="prepare_wallpaper_progress_message">正在准备壁纸&#8230;</string>
-    <string name="pick_wallpaper">选取<xliff:g name="type">%1$s</xliff:g></string>
-    <string name="pick_wallpaper_type_normal">@string/chooser_category_wallpaper</string>
-    <string name="pick_wallpaper_type_dark">深色壁纸</string>
 
     <string name="tile_dark_theme">深色主题</string>
 
@@ -167,4 +121,7 @@
     <string name="inputmethod">输入法</string>
 
     <string name="xposed_description">激活 SmartDark 黑名单: 您添加到名单里的应用不会被强制SmartDark (试验性功能).</string>
+    <string name="accessibility_toggle_dark_mode">切换深色模式</string>
+    <string name="accessibility_back">返回</string>
+    <string name="accessibility_more">更多选项</string>
 </resources>

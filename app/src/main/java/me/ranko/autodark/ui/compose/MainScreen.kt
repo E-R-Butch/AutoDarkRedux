@@ -30,28 +30,8 @@ fun MainScreen(
 ) {
     val context = LocalContext.current
     val autoMode by viewModel.autoMode.observeAsState(false)
-    // Bridge ObservableField to Compose State
-    var switchState by remember { mutableStateOf(viewModel.switch.get() as? DarkSwitch ?: DarkSwitch.OFF) }
-    DisposableEffect(viewModel) {
-        val callback = object : androidx.databinding.Observable.OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: androidx.databinding.Observable?, propertyId: Int) {
-                switchState = viewModel.switch.get() as? DarkSwitch ?: DarkSwitch.OFF
-            }
-        }
-        viewModel.switch.addOnPropertyChangedCallback(callback)
-        onDispose { viewModel.switch.removeOnPropertyChangedCallback(callback) }
-    }
-
-    val summary = remember { mutableStateOf(viewModel.summaryText.get()?.message) }
-    DisposableEffect(viewModel) {
-        val cb = object : androidx.databinding.Observable.OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: androidx.databinding.Observable?, propertyId: Int) {
-                summary.value = viewModel.summaryText.get()?.message
-            }
-        }
-        viewModel.summaryText.addOnPropertyChangedCallback(cb)
-        onDispose { viewModel.summaryText.removeOnPropertyChangedCallback(cb) }
-    }
+    val switchState by viewModel.switch.observeAsState(DarkSwitch.OFF)
+    val summary by viewModel.summaryText.observeAsState()
 
     AutoDarkTheme {
         Scaffold(
@@ -191,7 +171,7 @@ fun MainScreen(
                     }
                 }
 
-                summary.value?.let {
+                summary?.message?.let { message ->
                     item {
                         Card(
                             colors = CardDefaults.cardColors(
@@ -199,7 +179,7 @@ fun MainScreen(
                             )
                         ) {
                             Text(
-                                text = it,
+                                text = message,
                                 modifier = Modifier.padding(12.dp),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onTertiaryContainer

@@ -3,6 +3,7 @@ package me.ranko.autodark.ui.widget
 import android.content.Context
 import android.content.res.ColorStateList
 import android.util.AttributeSet
+import android.annotation.SuppressLint
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.appcompat.widget.AppCompatImageView
@@ -64,15 +65,16 @@ class MaterialCircleIconView @JvmOverloads constructor(
 
     @get:ColorRes
     val iconForegroundColorResource: Int
-        get() = resources.getIdentifier(
-            "material_${colorName}_${iconForegroundChroma}", "color", context.packageName
-        )
+        get() = colorResource(iconForegroundChroma)
 
     @get:ColorRes
     val iconBackgroundColorResource: Int
-        get() = resources.getIdentifier(
-            "material_${colorName}_${iconBackgroundChroma}", "color", context.packageName
-        )
+        get() = colorResource(iconBackgroundChroma)
+
+    @SuppressLint("DiscouragedApi")
+    private fun colorResource(chroma: String): Int = resources.getIdentifier(
+        "material_${colorName}_$chroma", "color", context.packageName
+    )
 
     @ColorInt
     fun getIconForegroundColor(): Int = ContextCompat.getColor(context, iconForegroundColorResource)

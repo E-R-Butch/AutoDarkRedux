@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreference
@@ -47,7 +46,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application), D
      * @see     triggerMasterSwitch
      * @see     DarkSwitch
      * */
-    val switch = ObservableField(getSwitchInSP())
+    private val _switch = MutableLiveData(getSwitchInSP())
+    val switch: LiveData<DarkSwitch>
+        get() = _switch
 
     private val _autoMode = MutableLiveData(darkSettings.isAutoMode())
     /**
@@ -60,7 +61,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application), D
      * An observable summary text message
      * Allow UI receive messages from the view model
      * */
-    val summaryText = ObservableField<Summary>()
+    private val _summaryText = MutableLiveData<Summary?>()
+    val summaryText: LiveData<Summary?>
+        get() = _summaryText
 
     /**
      * A dark mode or wallpaper changes will cause configuration change.
@@ -76,7 +79,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application), D
         View.OnClickListener {
             val isDarkMode = darkSettings.isDarkMode() ?: return@OnClickListener
             if (!darkSettings.setDarkMode(isDarkMode.not()))
-                summaryText.set(newSummary(R.string.dark_mode_permission_denied))
+                _summaryText.value = newSummary(R.string.dark_mode_permission_denied)
         }
     }
 
@@ -94,7 +97,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application), D
     /**
      * Called when fab on main activity has been clicked
      * */
-    fun onFabClicked() = when (switch.get() as DarkSwitch) {
+    fun onFabClicked() = when (_switch.value ?: DarkSwitch.OFF) {
         DarkSwitch.ON -> triggerMasterSwitch(false)
 
         DarkSwitch.OFF -> triggerMasterSwitch(true)
@@ -125,7 +128,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application), D
             return
         }
 
-        switch.set(if (status) DarkSwitch.ON else DarkSwitch.OFF)
+        _switch.value = if (status) DarkSwitch.ON else DarkSwitch.OFF
         val oldNightMode: Boolean = darkSettings.isDarkMode() ?: false
 
         // delay 360ms to let button animation finish
@@ -147,20 +150,20 @@ class MainViewModel(application: Application) : AndroidViewModel(application), D
                 }
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
                     delay(1200L)
-                    summaryText.set(makeTriggeredSummary())
+                    _summaryText.value = makeTriggeredSummary()
                     return@launch
                 }
                 delayedSummary = makeTriggeredSummary()
             } else {
                 // show summary message now
-                makeTriggeredSummary()?.apply { summaryText.set(this) }
+                makeTriggeredSummary()?.apply { _summaryText.value = this }
             }
         }
     }
 
     override fun onResume(owner: LifecycleOwner) {
         delayedSummary?.let {
-            summaryText.set(it)
+            _summaryText.value = it
             delayedSummary = null
         }
     }
@@ -175,7 +178,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application), D
      * */
     private fun makeTriggeredSummary(): Summary? {
         when {
-            switch.get() == DarkSwitch.OFF -> return newSummary(R.string.dark_mode_disabled)
+            switch.value == DarkSwitch.OFF -> return newSummary(R.string.dark_mode_disabled)
 
             darkSettings.isAutoMode() -> return newSummary(R.string.dark_mode_summary_auto_on)
 
@@ -198,9 +201,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application), D
 
     fun onAboutPageChanged(isShowing: Boolean) {
         if (isShowing) {
-            switch.set(DarkSwitch.SHARE)
+            _switch.value = DarkSwitch.SHARE
         } else {
-            switch.set(getSwitchInSP())
+            _switch.value = getSwitchInSP()
         }
     }
 
@@ -210,7 +213,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application), D
     fun onAutoModeClicked() = viewModelScope.launch(Dispatchers.Main) {
         // notify user turn location on
         if (!darkSettings.isAutoMode() && !darkSettings.isLocationEnabled()) {
-            summaryText.set(newSummary(R.string.app_location_disabled))
+            _summaryText.value = newSummary(R.string.app_location_disabled)
         } else {
             val old = darkSettings.isDarkMode() ?: false
             val result = darkSettings.triggerAutoMode()
@@ -219,10 +222,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application), D
                 if (old.xor(darkSettings.isDarkMode() == true)) {
                     delayedSummary = makeTriggeredSummary()
                 } else {
-                    summaryText.set(makeTriggeredSummary())
+                    _summaryText.value = makeTriggeredSummary()
                 }
             } else {
-                summaryText.set(newSummary(R.string.app_location_failed))
+                _summaryText.value = newSummary(R.string.app_location_failed)
             }
         }
 
@@ -254,7 +257,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application), D
 
     private fun showPermissionSummary(granted: Boolean) {
         val summary = if (granted) R.string.permission_granted else R.string.permission_failed
-        summaryText.set(newSummary(summary))
+        _summaryText.value = newSummary(summary)
     }
 
     fun onForceDarkClicked(preference: SwitchPreference, scope: CoroutineScope) = scope.launch(Dispatchers.Main) {
@@ -267,7 +270,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application), D
 
         if (!succeed && isActive) {
             preference.isChecked = preference.isChecked.not()
-            summaryText.set(newSummary(R.string.root_check_failed))
+            _summaryText.value = newSummary(R.string.root_check_failed)
         }
         preference.isEnabled = true
     }
@@ -295,7 +298,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application), D
                 false
             )
 
-            binding.viewModel = this@MainViewModel
+            binding.title.text = mContext.getString(
+                if (isRestricted) R.string.app_restricted_warning else R.string.app_restricted_title
+            )
+            binding.btnShutup.isEnabled = !isRestricted
 
             binding.btnLater.setOnClickListener { dismiss() }
 
