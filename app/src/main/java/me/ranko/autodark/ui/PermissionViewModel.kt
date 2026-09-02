@@ -44,12 +44,17 @@ class PermissionViewModel(application: Application) : ShizukuViewModel(applicati
     private fun grantPermission(jobIndicator: ObservableInt) = viewModelScope.launch {
         try {
             jobIndicator.set(LoadStatus.START)
-            when (jobIndicator) {
-                adbJobStatus -> { /* do nothing */ }
+            // Redux: all grants go via Shizuku unified route (Shizuku can be root-started)
+            val granted = ShizukuApi.unifiedGrant(getApplication())
+            if (!granted) {
+                // Fallback to original per-card logic for devices without Shizuku+root
+                when (jobIndicator) {
+                    adbJobStatus -> { /* do nothing - user will use manual ADB */ }
 
-                sudoJobStatus -> ShellJobUtil.runSudoJob(COMMAND_GRANT_PM)
+                    sudoJobStatus -> ShellJobUtil.runSudoJob(COMMAND_GRANT_PM)
 
-                shizukuJobStatus -> ShizukuApi.grantWithShizuku()
+                    shizukuJobStatus -> ShizukuApi.grantWithShizuku()
+                }
             }
         } catch (e: Exception) {
             Timber.i(e)

@@ -131,6 +131,11 @@ class PermissionActivity : BaseListActivity(), ViewTreeObserver.OnGlobalLayoutLi
                 titleIcon.startAnimation(rotate)
             }
         }
+        // Redux: Shizuku unified - hide ADB/Root fallback cards to keep UI clean (still available via code fallback)
+        try {
+            binding.content.adb.visibility = android.view.View.GONE
+            binding.content.root.visibility = android.view.View.GONE
+        } catch (_: Exception) {}
     }
 
     private fun showRootView() {

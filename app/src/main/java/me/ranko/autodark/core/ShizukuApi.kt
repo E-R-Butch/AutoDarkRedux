@@ -132,6 +132,62 @@ object ShizukuApi {
         mManager.grantRuntimePermission(BuildConfig.APPLICATION_ID, Manifest.permission.WRITE_SECURE_SETTINGS, android.os.Process.ROOT_UID)
     }
 
+    /**
+     * Redux: Unified grant via Shizuku - single mature route.
+     * Shizuku can be started with root, so all permission grants go through Shizuku.
+     * Returns true if WRITE_SECURE_SETTINGS was granted.
+     */
+    suspend fun unifiedGrant(context: Context): Boolean {
+        // 1. Try direct Shizuku grant if already AVAILABLE
+        if (checkShizukuCompat(context) == ShizukuStatus.AVAILABLE) {
+            try {
+                grantWithShizuku()
+                if (me.ranko.autodark.AutoDarkApplication.checkSecurePermission(context)) return true
+            } catch (_: Exception) {}
+        }
+        // 2. If Shizuku is DEAD (installed but not running) and root available, try to start Shizuku via root then grant
+        val status = checkShizukuCompat(context)
+        if (status == ShizukuStatus.DEAD && isRootAvailable()) {
+            if (tryStartShizukuWithRoot()) {
+                kotlinx.coroutines.delay(1200)
+                if (checkShizukuCompat(context) == ShizukuStatus.AVAILABLE) {
+                    try {
+                        grantWithShizuku()
+                        if (me.ranko.autodark.AutoDarkApplication.checkSecurePermission(context)) return true
+                    } catch (_: Exception) {}
+                }
+            }
+        }
+        // 3. If Shizuku not installed but root available, try direct pm grant via root as Shizuku-root fallback
+        if (isRootAvailable()) {
+            try {
+                me.ranko.autodark.Utils.ShellJobUtil.runSudoJob(me.ranko.autodark.Constant.COMMAND_GRANT_PM)
+                if (me.ranko.autodark.AutoDarkApplication.checkSecurePermission(context)) return true
+            } catch (_: Exception) {}
+        }
+        return false
+    }
+
+    fun isRootAvailable(): Boolean = try {
+        val p = Runtime.getRuntime().exec(arrayOf("su", "-c", "id"))
+        p.waitFor() == 0 && p.inputStream.bufferedReader().readText().contains("uid=0")
+    } catch (_: Exception) { false }
+
+    suspend fun tryStartShizukuWithRoot(): Boolean {
+        val cmds = listOf(
+            "sh /sdcard/Android/data/moe.shizuku.privileged.api/start.sh",
+            "sh /data/data/moe.shizuku.privileged.api/start.sh",
+            "sh /data/user/0/moe.shizuku.privileged.api/files/start.sh"
+        )
+        for (cmd in cmds) {
+            try {
+                me.ranko.autodark.Utils.ShellJobUtil.runSudoJob(cmd)
+                return true
+            } catch (_: Exception) {}
+        }
+        return false
+    }
+
     fun isPre11(): Boolean = try {
         Shizuku.isPreV11() && Shizuku.getVersion() <= 10
     } catch (e: SecurityException) {
