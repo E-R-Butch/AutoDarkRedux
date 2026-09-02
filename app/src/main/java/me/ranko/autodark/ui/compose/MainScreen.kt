@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import me.ranko.autodark.R
 import me.ranko.autodark.ui.BlockListActivity
 import me.ranko.autodark.ui.DarkSwitch
-import me.ranko.autodark.ui.DarkWallpaperPickerActivity
+import me.ranko.autodark.ui.compose.DualWallpaperComposeActivity
 import me.ranko.autodark.ui.MainViewModel
 import me.ranko.autodark.ui.compose.theme.AutoDarkTheme
 import java.time.format.DateTimeFormatter
@@ -164,7 +164,7 @@ fun MainScreen(
                     ElevatedCard(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
-                            context.startActivity(Intent(context, DarkWallpaperPickerActivity::class.java))
+                            context.startActivity(Intent(context, DualWallpaperComposeActivity::class.java))
                         }
                     ) {
                         ListItem(

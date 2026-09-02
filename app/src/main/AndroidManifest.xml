@@ -70,6 +70,11 @@
             android:theme="@style/AppTheme.Transparent.DarkActionBar" />
 
         <activity
+            android:name=".ui.compose.DualWallpaperComposeActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme.Transparent.DarkActionBar" />
+
+        <activity
             android:name=".ui.DarkWallpaperPickerActivity"
             android:exported="false"
             android:resizeableActivity="false"

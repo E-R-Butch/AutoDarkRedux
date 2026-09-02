@@ -99,6 +99,9 @@ dependencies {
     }
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
 
+    // Coil for Compose AsyncImage (dual wallpaper preview)
+    implementation 'io.coil-kt:coil-compose:2.7.0'
+
     // Logging
     implementation "com.jakewharton.timber:timber:$ver_timber"
 
