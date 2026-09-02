@@ -18,8 +18,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.*
 import me.ranko.autodark.AutoDarkApplication
-import me.ranko.autodark.AutoDarkApplication.isComponentEnabled
-import me.ranko.autodark.Constant.*
+import me.ranko.autodark.Constant.SP_KEY_MASTER_SWITCH
+import me.ranko.autodark.Constant.SP_RESTRICTED_SILENCE
 import me.ranko.autodark.R
 import me.ranko.autodark.receivers.DarkModeAlarmReceiver
 import me.ranko.autodark.Utils.DarkLocationUtil
@@ -90,7 +90,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application), D
     val requirePermission: LiveData<Boolean>
         get() = _requirePermission
 
-    val isRestricted:Boolean by lazy(LazyThreadSafetyMode.NONE) {!isComponentEnabled(application, DarkModeAlarmReceiver::class.java) }
+    val isRestricted:Boolean by lazy(LazyThreadSafetyMode.NONE) {!AutoDarkApplication.isComponentEnabled(application, DarkModeAlarmReceiver::class.java) }
 
     private var isDialogShowed = false
 

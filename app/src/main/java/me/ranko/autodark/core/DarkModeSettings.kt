@@ -19,7 +19,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import me.ranko.autodark.AutoDarkApplication
-import me.ranko.autodark.Constant.*
+import me.ranko.autodark.Constant.COMMAND_SET_FORCE_DARK_OFF
+import me.ranko.autodark.Constant.COMMAND_SET_FORCE_DARK_ON
+import me.ranko.autodark.Constant.SP_AUTO_TIME_SUNRISE
+import me.ranko.autodark.Constant.SP_AUTO_TIME_SUNSET
+import me.ranko.autodark.Constant.SP_KEY_MASTER_SWITCH
+import me.ranko.autodark.Constant.SYSTEM_PROP_FORCE_DARK
+import me.ranko.autodark.Constant.SYSTEM_SECURE_PROP_DARK_MODE
 import me.ranko.autodark.R
 import me.ranko.autodark.Utils.DarkLocationUtil
 import me.ranko.autodark.Utils.DarkTimeUtil
