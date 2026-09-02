@@ -351,16 +351,17 @@ class DarkModeSettings private constructor(private val context: Application) :
     }
 
     private fun getPreferenceTime(type: String): LocalTime {
-        requireNotNull(mSupplier) { "Exception call: Preference has been detached." }
-        return if (isAutoMode) {
-            val darkTimeStr = if (type == DARK_PREFERENCE_START) {
-                sp.getString(SP_AUTO_TIME_SUNSET, "19:20")!!
-            } else {
-                sp.getString(SP_AUTO_TIME_SUNRISE, "06:15")!!
-            }
-            DarkTimeUtil.getPersistLocalTime(darkTimeStr)
+        val isStart = type == DARK_PREFERENCE_START
+        val defaultTime = if (isStart) "19:20" else "06:15"
+        val preferenceKey = if (isAutoMode) {
+            if (isStart) SP_AUTO_TIME_SUNSET else SP_AUTO_TIME_SUNRISE
         } else {
-            mSupplier!!.get(type).time
+            // Read from app preferences, not from a Preference view owned by MainFragment.
+            // Compose screens can outlive that fragment and must not depend on its lifecycle.
+            type
         }
+
+        val storedTime = sp.getString(preferenceKey, defaultTime) ?: defaultTime
+        return DarkTimeUtil.getPersistLocalTime(storedTime)
     }
 }
