@@ -1,76 +1,86 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <!-- Material 3 Migration: Theme.MaterialComponents -> Theme.Material3, add Dynamic Colors support -->
+    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- M3 will generate colors from Dynamic Color (Monet) if available, fallback to baseline -->
+        <!-- Keep custom attrs for compat, but M3 will override -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryVariant">@color/primaryVariant</item>
         <item name="colorSecondary">@color/secondary</item>
-        <item name="colorAccent">@color/primary</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:colorBackground">@color/bottom_sheet_background</item>
-        <item name="android:statusBarColor">@color/appbar_background</item>
-        <item name="android:navigationBarColor">@color/appbar_background</item>
+        <item name="android:colorBackground">?attr/colorSurface</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
         <item name="materialCircleIconViewStyle">@style/MaterialCircleIconView</item>
+        <!-- Edge-to-edge: enable drawing behind system bars -->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 
-    <style name="AppTheme.ActionBar">
+    <!-- Dynamic Colors overlay - applied automatically via DynamicColors.applyToActivitiesIfAvailable() -->
+    <style name="AppTheme.Dynamic" parent="ThemeOverlay.Material3.DynamicColors.DayNight" />
+
+    <style name="AppTheme.ActionBar" parent="Theme.Material3.DayNight">
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:statusBarColor">?attr/colorSurface</item>
+        <item name="android:navigationBarColor">?attr/colorSurface</item>
     </style>
 
-    <style name="AppTheme.ActionBar.Preview">
-        <item name="android:statusBarColor">@color/material_white_1000</item>
-        <item name="android:navigationBarColor">@color/material_white_1000</item>
+    <style name="AppTheme.ActionBar.Preview" parent="AppTheme.ActionBar">
+        <item name="android:statusBarColor">?attr/colorSurface</item>
+        <item name="android:navigationBarColor">?attr/colorSurface</item>
     </style>
 
-    <style name="AppTheme.Transparent">
+    <style name="AppTheme.Transparent" parent="AppTheme">
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@color/appbar_background</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.Transparent.ActionBar">
+    <style name="AppTheme.Transparent.ActionBar" parent="AppTheme.Transparent">
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar">true</item>
     </style>
 
-    <style name="AppTheme.Transparent.DarkActionBar">
+    <style name="AppTheme.Transparent.DarkActionBar" parent="AppTheme.Transparent">
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowLightNavigationBar">true</item>
     </style>
 
-    <style name="AppTheme.BottomSheetDialogDayNight" parent="Theme.MaterialComponents.DayNight.BottomSheetDialog">
+    <style name="AppTheme.BottomSheetDialogDayNight" parent="Theme.Material3.DayNight.BottomSheetDialog">
         <item name="android:windowIsFloating">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="colorOnBackground">@color/bottom_sheet_background</item>
-        <item name="android:navigationBarColor">@color/bottom_sheet_background</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 
-    <style name="AppTheme.XposedManager">
+    <style name="AppTheme.XposedManager" parent="Theme.Material3.DayNight">
         <item name="android:colorEdgeEffect">?attr/colorPrimary</item>
         <item name="colorPrimary">@color/google_blue_600</item>
-        <item name="colorAccent">@color/google_blue_600</item>
         <item name="colorControlActivated">?attr/colorPrimary</item>
         <item name="colorSwitchThumbNormal">@color/material_grey_300</item>
         <item name="android:colorForeground">@color/material_grey_500</item>
     </style>
 
-    <style name="Widget.ActionBar" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />
+    <style name="Widget.ActionBar" parent="ThemeOverlay.Material3.Toolbar.Surface" />
 
-    <style name="Widget.ActionBarLight" parent="ThemeOverlay.MaterialComponents.Toolbar.Primary" >
+    <style name="Widget.ActionBarLight" parent="ThemeOverlay.Material3.Toolbar.Surface" >
         <item name="colorOnPrimary">?attr/colorOnSurface</item>
     </style>
 
     <style name="CardBaseStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginBottom">4dp</item>
-        <item name="android:layout_marginTop">4dp</item>
-        <item name="android:layout_marginStart">8dp</item>
-        <item name="android:layout_marginEnd">8dp</item>
-        <item name="android:foreground">@drawable/material_button_outline_foreground</item>
-        <item name="android:background">@drawable/material_button_outline_background</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:background">?attr/colorSurfaceVariant</item>
         <item name="android:paddingStart">16dp</item>
         <item name="android:paddingEnd">16dp</item>
         <item name="android:paddingTop">24dp</item>
@@ -87,7 +97,7 @@
     <style name="CardStyle" parent="CardBaseStyle"/>
 
     <style name="CardButton">
-        <item name="android:background">@drawable/card_btn_background</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/permission_button_size</item>
         <item name="android:gravity">center_vertical</item>
@@ -97,83 +107,45 @@
         <item name="android:paddingBottom">12dp</item>
         <item name="android:textSize">16sp</item>
         <item name="android:drawablePadding">24dp</item>
-        <item name="android:textColor">?colorPrimary</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
     </style>
 
-    <style name="CardProgress" parent="Widget.AppCompat.ProgressBar">
-        <item name="android:layout_width">@dimen/permission_button_size</item>
-        <item name="android:layout_height">@dimen/permission_button_size</item>
-        <item name="android:padding">@dimen/permission_progress_padding</item>
-        <item name="android:progressTint">?attr/colorAccent</item>
-        <item name="android:visibility">gone</item>
-    </style>
+    <style name="CardProgress" parent="Widget.AppCompat.ProgressBar"/>
 
     <style name="MaterialCircleIconView">
-        <item name="iconForegroundChroma">600</item>
-        <item name="iconBackgroundChroma">50</item>
+        <item name="iconForegroundChroma">100</item>
+        <item name="iconBackgroundChroma">600</item>
         <item name="android:background">@drawable/shape_circle_icon_background</item>
         <item name="android:tintMode">src_in</item>
         <item name="android:backgroundTintMode">src_in</item>
     </style>
 
-    <style name="MaterialPickerButton" parent="Widget.MaterialComponents.Button">
-        <item name="android:layout_marginStart">@dimen/picker_button_margin_horizontal</item>
-        <item name="android:layout_marginTop">@dimen/picker_button_margin_vertical</item>
-        <item name="android:layout_marginEnd">@dimen/picker_button_margin_horizontal</item>
-        <item name="android:outlineSpotShadowColor">?android:attr/colorPrimary</item>
+    <style name="MaterialPickerButton" parent="Widget.Material3.Button"/>
+
+    <style name="ManagerAppListTextAppearance" parent="TextAppearance.Material3.BodyMedium"/>
+
+    <style name="SimpleDialogStyle" parent="ThemeOverlay.Material3.Dialog"/>
+
+    <style name="set_wallpaper_destination_item" parent="Widget.Material3.Button.TextButton"/>
+
+    <!-- Restored from old for compat, now Material3 -->
+    <style name="PreviewCard" parent="Widget.Material3.CardView.Elevated">
+        <item name="android:clipChildren">true</item>
+        <item name="contentPadding">0dp</item>
+        <item name="cardCornerRadius">16dp</item>
     </style>
 
-    <style name="ManagerAppListTextAppearance" parent="TextAppearance.AppCompat.Medium">
-        <item name="android:layout_marginTop">2dp</item>
-        <item name="android:textColor">@color/text_color_xposed_list</item>
-        <item name="android:textSize" tools:ignore="SpUsage">12dp</item>
-    </style>
-
-    <style name="SimpleDialogStyle" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
-        <item name="textAppearanceListItemSmall">@style/BaseDialogTextAppearance</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:background">@color/bottom_sheet_background</item>
-    </style>
-
-    <!-- Set wallpaper destination item -->
-    <style name="set_wallpaper_destination_item" parent="Widget.AppCompat.Button.Borderless">
-        <item name="android:minHeight">@dimen/set_wallpaper_dialog_item_min_height</item>
-        <item name="android:textAlignment">viewStart</item>
-        <item name="android:textAppearance">?attr/textAppearanceListItemSmall</item>
-        <item name="android:textSize">@dimen/abc_text_size_subhead_material</item>
-        <item name="android:textColor">@color/set_wallpaper_item_color</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:alpha">.87</item>
-        <item name="android:paddingStart">?attr/dialogPreferredPadding</item>
-        <item name="android:paddingEnd">?attr/dialogPreferredPadding</item>
-        <item name="android:background">?attr/selectableItemBackground</item>
-        <item name="android:drawablePadding">@dimen/set_wallpaper_dialog_item_drawable_padding</item>
-        <item name="android:drawableTint">?android:colorAccent</item>
-        <item name="android:drawableTintMode">src_atop</item>
-    </style>
-
-    <style name="BaseDialogTextAppearance">
+    <style name="BaseDialogTextAppearance" parent="TextAppearance.Material3.TitleMedium">
         <item name="android:paddingTop">16dp</item>
         <item name="android:paddingStart">16dp</item>
         <item name="android:paddingEnd">16dp</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:textSize">16sp</item>
     </style>
 
-    <!-- Option tiles -->
+    <style name="TitleTextAppearance" parent="TextAppearance.Material3.TitleLarge"/>
+
     <style name="OptionTitleTextAppearance" parent="TitleTextAppearance">
         <item name="android:textAlignment">center</item>
         <item name="android:textSize">@dimen/option_title_font_text_size</item>
         <item name="android:lineHeight">@dimen/option_title_line_height</item>
     </style>
-
-    <style name="PreviewCard" parent="CardView">
-        <item name="android:clipChildren">true</item>
-        <item name="contentPadding">0dp</item>
-        <item name="cardCornerRadius">?android:dialogCornerRadius</item>
-    </style>
-
-    <!-- Individual components / Widgets -->
-    <style name="TitleTextAppearance" parent="@android:style/TextAppearance.DeviceDefault.Widget.ActionBar.Title"/>
 </resources>

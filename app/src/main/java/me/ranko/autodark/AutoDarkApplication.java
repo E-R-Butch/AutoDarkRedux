@@ -10,6 +10,7 @@ import android.Manifest;
 
 import androidx.core.content.ContextCompat;
 
+import com.google.android.material.color.DynamicColors;
 import org.lsposed.hiddenapibypass.HiddenApiBypass;
 
 import me.ranko.autodark.core.DebugTree;
@@ -36,6 +37,11 @@ public final class AutoDarkApplication extends Application {
         } else {
             Timber.plant(ReleaseTree.INSTANCE);
         }
+
+        // Material 3 Dynamic Color (Monet) - apply wallpaper-based theming if available (Android 12+)
+        try {
+            DynamicColors.applyToActivitiesIfAvailable(this);
+        } catch (Exception ignored) {}
 
         DarkModeTileService.setUp(this);
     }

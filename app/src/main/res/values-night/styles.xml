@@ -1,35 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme.ActionBar">
-        <item name="android:windowLightStatusBar">false</item>
-        <item name="android:windowLightNavigationBar">false</item>
-    </style>
-
-    <style name="AppTheme.ActionBar.Preview">
-        <item name="android:statusBarColor">@color/material_black_1000</item>
-        <item name="android:navigationBarColor">@color/material_black_1000</item>
-        <item name="android:colorBackground">@color/material_black_1000</item>
-    </style>
-
-    <style name="AppTheme.Transparent.ActionBar">
-        <item name="android:windowLightStatusBar">false</item>
-        <item name="android:windowLightNavigationBar">false</item>
-    </style>
-
-    <style name="AppTheme.Transparent.DarkActionBar">
-        <item name="android:windowLightNavigationBar">false</item>
-    </style>
-
+    <!-- Night overrides are now handled by DayNight automatically, keep only specific -->
     <style name="CardStyle" parent="CardBaseStyle">
-        <item name="android:background">@drawable/material_button_outline_background_dark</item>
+        <item name="android:background">?attr/colorSurfaceVariant</item>
     </style>
-
-    <style name="MaterialCircleIconView">
-        <item name="iconForegroundChroma">100</item>
-        <item name="iconBackgroundChroma">600</item>
-        <item name="android:background">@drawable/shape_circle_icon_background</item>
-        <item name="android:tintMode">src_in</item>
-        <item name="android:backgroundTintMode">src_in</item>
-    </style>
-
 </resources>
